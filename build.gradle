@@ -28,9 +28,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+//	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	//로컬 MySQL 테스트용
+	implementation 'mysql:mysql-connector-java:8.0.32'
 }
 
 tasks.named('test') {
@@ -39,7 +42,7 @@ tasks.named('test') {
 
 //SpringBoot 가 build 될 때 React 프로젝트가 먼저 build 되고
 //결과물을 SpringBoot 프로젝트의 build 결과물에 포함시키는 스크립트.
-def frontendDir = "$projectDir/src/main/front/joshuaam"
+/*def frontendDir = "$projectDir/src/main/front/joshuaam"
 
 sourceSets {
 	main {
@@ -78,4 +81,4 @@ tasks.register('copyReactBuildFiles', Copy) {
 	dependsOn "buildReact"
 	from "$frontendDir/build"
 	into "$projectDir/src/main/resources/static"
-}
+}*/
