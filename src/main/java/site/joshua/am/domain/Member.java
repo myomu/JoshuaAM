@@ -19,11 +19,14 @@ public class Member {
     @NotEmpty
     private String name;
 
+    @NotEmpty
     private int age;
 
+    @NotEmpty
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @NotEmpty
     @Enumerated(EnumType.STRING)
     private MemberStatus memberStatus;
 

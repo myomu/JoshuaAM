@@ -4,6 +4,8 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import site.joshua.am.domain.Member;
+import site.joshua.am.dto.AttendanceCheckDto;
+import site.joshua.am.dto.MembersDto;
 
 import java.util.List;
 
@@ -34,6 +36,14 @@ public class MemberRepository {
 
     public void delete(Member member) {
         em.remove(member);
+    }
+
+    public List<MembersDto> findMembers() {
+        return em.createQuery(
+                        "select new site.joshua.am.dto.MembersDto(m.id, m.name, m.age, m.gender, g.name, m.memberStatus)" +
+                                " from Member m" +
+                                " join m.group g", MembersDto.class)
+                .getResultList();
     }
 
 }

@@ -3,17 +3,18 @@ package site.joshua.am.apicontroller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import site.joshua.am.domain.*;
+import site.joshua.am.dto.AttendanceCheckDto;
+import site.joshua.am.dto.MembersDto;
 import site.joshua.am.form.CreateMemberForm;
 import site.joshua.am.repository.GroupRepository;
 import site.joshua.am.repository.MemberRepository;
 import site.joshua.am.repository.UserRepository;
 import site.joshua.am.service.MemberService;
 import site.joshua.am.service.UserService;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,6 +41,11 @@ public class MemberApiController {
         Group findGroup = groupRepository.findOne(form.getGroup());
         member.createMember(form.getName(), form.getAge(), form.getGender(), findGroup, user, MemberStatus.MEMBER);
         memberService.addMember(member);
+    }
+
+    @GetMapping("/members")
+    public List<MembersDto> attendanceCheck() {
+        return memberRepository.findMembers();
     }
 
 }
