@@ -1,9 +1,7 @@
 package site.joshua.am.apicontroller;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import site.joshua.am.domain.Attendance;
@@ -11,8 +9,9 @@ import site.joshua.am.domain.AttendanceStatus;
 import site.joshua.am.domain.Group;
 import site.joshua.am.domain.Member;
 import site.joshua.am.dto.AttendanceCheckDto;
-import site.joshua.am.dto.AttendanceDto;
+import site.joshua.am.dto.AttendanceMembersDto;
 import site.joshua.am.dto.AttendanceStatusDTO;
+import site.joshua.am.dto.ListOfMembersDto;
 import site.joshua.am.form.AttendanceForm;
 import site.joshua.am.repository.AttendanceRepository;
 import site.joshua.am.repository.GroupRepository;
@@ -43,15 +42,28 @@ public class AttendanceApiController {
     /**
      * 출석 체크 화면 GET 요청
      */
-    @GetMapping("/attendances")
-    public List<AttendanceDto> attendances() {
-//        List<Member> members = memberRepository.findAll();
-//        List<Group> groups = groupRepository.findAll();
+    @GetMapping("/attendances/check")
+    public List<ListOfMembersDto> listOfMembers() {
+        List<Group> groups = groupRepository.findAll();
+        List<AttendanceMembersDto> members = attendanceRepository.findListOfMembers();
+        List<ListOfMembersDto> listOfMembersDtos = new ArrayList<>();
 
-        return attendanceRepository.findAttendances();
+        for (Group group : groups) {
+            ListOfMembersDto attendancesDto = new ListOfMembersDto();
+            attendancesDto.setGroupId(group.getId());
+            attendancesDto.setGroupName(group.getName());
+            for (AttendanceMembersDto member : members) {
+                if (group.getId().equals(member.getGroupId())) {
+                    attendancesDto.addList(member);
+                }
+            }
+            listOfMembersDtos.add(attendancesDto);
+        }
+
+        return listOfMembersDtos;
     }
 
-    @GetMapping("/attendances/check")
+//    @GetMapping("/attendances/check")
     public List<AttendanceCheckDto> attendanceCheck() {
         return attendanceRepository.findAttendanceCheckList();
     }

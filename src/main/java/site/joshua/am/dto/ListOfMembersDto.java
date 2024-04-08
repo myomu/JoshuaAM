@@ -1,25 +1,22 @@
 package site.joshua.am.dto;
 
 import lombok.Data;
+import site.joshua.am.domain.Member;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class AttendancesDto {
+public class ListOfMembersDto {
 
     private Long groupId;
-    private List<AttendanceCheckDto> attendanceCheckDtoList = new ArrayList<>();
+    private String groupName;
+    private List<AttendanceMembersDto> members = new ArrayList<>();
 
-    public AttendancesDto(Long groupId, List<AttendanceCheckDto> attendanceCheckDtoList) {
-        this.groupId = groupId;
-        this.attendanceCheckDtoList = attendanceCheckDtoList;
+    public ListOfMembersDto() {
     }
 
-    public AttendancesDto() {
-    }
-
-    public void addList(AttendanceCheckDto attendanceCheckDto) {
-        this.attendanceCheckDtoList.add(attendanceCheckDto);
+    public void addList(AttendanceMembersDto member) {
+        this.members.add(member);
     }
 }

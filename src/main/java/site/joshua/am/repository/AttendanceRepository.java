@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 import site.joshua.am.domain.Attendance;
 import site.joshua.am.dto.AttendanceCheckDto;
 import site.joshua.am.dto.AttendanceDto;
+import site.joshua.am.dto.AttendanceMembersDto;
+import site.joshua.am.dto.MembersDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -57,6 +59,14 @@ public class AttendanceRepository {
                 "select new site.joshua.am.dto.AttendanceCheckDto(m.id, m.name, g.id, g.name)" +
                         " from Member m" +
                         " join m.group g", AttendanceCheckDto.class)
+                .getResultList();
+    }
+
+    public List<AttendanceMembersDto> findListOfMembers() {
+        return em.createQuery(
+                        "select new site.joshua.am.dto.AttendanceMembersDto(m.id, m.name, g.id)" +
+                                " from Member m" +
+                                " join m.group g", AttendanceMembersDto.class)
                 .getResultList();
     }
 

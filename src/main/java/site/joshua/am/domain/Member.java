@@ -3,6 +3,7 @@ package site.joshua.am.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -19,14 +20,13 @@ public class Member {
     @NotEmpty
     private String name;
 
-    @NotEmpty
+    @NotNull //Integer 타입의 경우에는 NotNull을 사용하고 String 타입의 경우에는 NotEmpty를 사용한다.
     private int age;
 
-    @NotEmpty
+    @NotNull //Enum 타입의 경우도 NotEmpty를 사용하지 않고 NotNull을 사용해야한다.
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @NotEmpty
     @Enumerated(EnumType.STRING)
     private MemberStatus memberStatus;
 
