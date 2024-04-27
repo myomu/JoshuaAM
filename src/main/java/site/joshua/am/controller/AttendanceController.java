@@ -77,7 +77,7 @@ public class AttendanceController {
             Member member = new Member();
             member.setMemberId(memberId);
 
-            attendance.createAttendance(member, AttendanceStatus.ATTENDANCE, dateTime);
+//            attendance.createAttendance(member, AttendanceStatus.ATTENDANCE, dateTime);
             attendanceService.addAttendance(attendance);
         }
 
@@ -130,7 +130,7 @@ public class AttendanceController {
         AttendanceForm form = new AttendanceForm();
 
         for (Attendance attendance : attendancesByDateTime) {
-            memberIds.add(attendance.getMember().getId());
+//            memberIds.add(attendance.getMember().getId());
         }
 
         form.setMemberIds(memberIds);
@@ -180,7 +180,7 @@ public class AttendanceController {
             Member member = new Member();
             member.setMemberId(memberId);
 
-            attendance.createAttendance(member, AttendanceStatus.ATTENDANCE, dateTime);
+//            attendance.createAttendance(member, AttendanceStatus.ATTENDANCE, dateTime);
             attendanceService.addAttendance(attendance);
         }
 

@@ -34,9 +34,6 @@ public class Member {
     @JoinColumn(name = "group_id")
     private Group group;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<Attendance> attendances = new ArrayList<>();
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;

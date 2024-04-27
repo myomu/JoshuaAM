@@ -41,9 +41,9 @@ public class MemberController {
         for (Member member : members) {
             int count = 0;
             for (Attendance attendance : attendances) {
-                if (member == attendance.getMember()) {
-                    count++;
-                }
+//                if (member == attendance.getMember()) {
+//                    count++;
+//                }
             }
             // 출석률을 계산하여 member 객체와 함께 MemberListDTO 에 저장시킨다.
             // 출석 날짜를 기준으로 나누기 때문에 findNoDuplicateDate()로 중복없는 날짜를 가져와 나눠준다.

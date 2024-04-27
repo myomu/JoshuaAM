@@ -1,21 +1,21 @@
 package site.joshua.am.apicontroller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import site.joshua.am.domain.Attendance;
-import site.joshua.am.domain.AttendanceStatus;
-import site.joshua.am.domain.Group;
-import site.joshua.am.domain.Member;
-import site.joshua.am.dto.AttendanceCheckDto;
-import site.joshua.am.dto.AttendanceMembersDto;
-import site.joshua.am.dto.AttendanceStatusDTO;
-import site.joshua.am.dto.ListOfMembersDto;
+import site.joshua.am.domain.*;
+import site.joshua.am.dto.*;
 import site.joshua.am.form.AttendanceForm;
+import site.joshua.am.form.CreateAttendanceCheckForm;
+import site.joshua.am.form.DeleteAttendanceForm;
+import site.joshua.am.form.EditAttendanceCheckForm;
+import site.joshua.am.repository.AttendanceDataRepository;
 import site.joshua.am.repository.AttendanceRepository;
 import site.joshua.am.repository.GroupRepository;
 import site.joshua.am.repository.MemberRepository;
+import site.joshua.am.service.AttendanceDataService;
 import site.joshua.am.service.AttendanceService;
 import site.joshua.am.service.GroupService;
 import site.joshua.am.service.MemberService;
@@ -23,6 +23,7 @@ import site.joshua.am.service.MemberService;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -38,6 +39,8 @@ public class AttendanceApiController {
     private final MemberRepository memberRepository;
     private final GroupRepository groupRepository;
     private final AttendanceRepository attendanceRepository;
+    private final AttendanceDataService attendanceDataService;
+    private final AttendanceDataRepository attendanceDataRepository;
 
     /**
      * 출석 체크 화면 GET 요청
@@ -49,92 +52,127 @@ public class AttendanceApiController {
         List<ListOfMembersDto> listOfMembersDtos = new ArrayList<>();
 
         for (Group group : groups) {
-            ListOfMembersDto attendancesDto = new ListOfMembersDto();
-            attendancesDto.setGroupId(group.getId());
-            attendancesDto.setGroupName(group.getName());
+            ListOfMembersDto listOfMembersDto = new ListOfMembersDto();
+            listOfMembersDto.setGroupId(group.getId());
+            listOfMembersDto.setGroupName(group.getName());
             for (AttendanceMembersDto member : members) {
                 if (group.getId().equals(member.getGroupId())) {
-                    attendancesDto.addList(member);
+                    listOfMembersDto.addList(member);
                 }
             }
-            listOfMembersDtos.add(attendancesDto);
+            listOfMembersDtos.add(listOfMembersDto);
         }
 
         return listOfMembersDtos;
     }
 
-//    @GetMapping("/attendances/check")
-    public List<AttendanceCheckDto> attendanceCheck() {
-        return attendanceRepository.findAttendanceCheckList();
-    }
-
     /**
-     * 출석 체크 생성
-     */
-    @PostMapping("/attendances/new")
-    public String create(@RequestParam(name = "id", required = false) List<Long> memberIds,
-                         @RequestParam(name = "year", required = false) String year,
-                         @RequestParam(name = "month", required = false) String month,
-                         @RequestParam(name = "day", required = false) String day) {
-
-        // 아무것도 체크가 되지 않으면 memberIds List 인스턴스가 생성되지 않으므로 isEmpty()는 사용 불가능하다. null로 체크하자.
-        if (memberIds.isEmpty()) {
-            return "redirect:/attendances";
+    * 출석 체크 생성
+    */
+    @PostMapping("/attendances/create")
+    public void createAttendance(@RequestBody @Valid CreateAttendanceCheckForm form) {
+        log.info("form={}", form);
+        if (form.getMemberIds().isEmpty()) {
+            //react에 대충 400.. 에러를 내려줘야하거나 출석체크 화면으로 이동하게끔(가능?) 해야할 듯
         }
 
         // LocalDateTime 변수 생성.
         LocalDateTime dateTime;
+        String year = form.getYear();
+        String month = form.getMonth();
+        String day = form.getDay();
 
         if (year == null || month == null || day == null) {
+            //연, 월, 일 중 하나라도 null 이면 현재 시간을 기준으로 생성
             dateTime = LocalDateTime.now();
         } else {
+            year = String.format("%04d", Integer.parseInt(form.getYear()));
+            month = String.format("%02d", Integer.parseInt(form.getMonth()));
+            day = String.format("%02d", Integer.parseInt(form.getDay()));
+
             String date = year+"-"+month+"-"+day+" 00:00:00";
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             dateTime = LocalDateTime.parse(date, formatter);
         }
 
-        for (Long memberId : memberIds) {
-            Attendance attendance = new Attendance();
-            Member member = new Member();
-            member.setMemberId(memberId);
+        //Attendance 를 먼저 생성하고 DB에 저장
+        Attendance attendance = new Attendance();
+        attendance.createAttendance(dateTime);
+        attendanceService.addAttendance(attendance);
 
-            attendance.createAttendance(member, AttendanceStatus.ATTENDANCE, dateTime);
-            attendanceService.addAttendance(attendance);
+        //Member를 모두 불러와서 Form에서 Check 된 Member만 AttendanceData의 Status를 ATTENDANCE 로 저장.
+        List<Member> members = memberRepository.findAll();
+        for (Member member : members) {
+            AttendanceData attendanceData = new AttendanceData();
+            if (form.getMemberIds().contains(member.getId())) {
+                attendanceData.createAttendanceData(attendance, member, AttendanceStatus.ATTENDANCE);
+            } else {
+                attendanceData.createAttendanceData(attendance, member, AttendanceStatus.ABSENCE);
+            }
+            attendanceDataService.addAttendanceData(attendanceData);
         }
-
-        return "redirect:/attendances/status";
     }
 
     /**
      * 출석 목록 화면 GET 요청
      */
-    @GetMapping("/attendances/status")
-    public String attendanceList(Model model) {
-        List<LocalDateTime> attendanceDateList = attendanceService.findNoDuplicateDate();
+    @GetMapping("/attendances")
+    public List<AttendancesDto> attendanceList() {
         List<Attendance> attendances = attendanceService.findAttendances();
 
-        model.addAttribute("attendanceList", attendances);
-
-        // 날짜와 해당 날짜와 일치하는 attendance 를 찾아서 날짜와 개수를 DTO 에 담아서 model 로 html 에 넘겨준다.
-        List<AttendanceStatusDTO> attendanceStatusDTOS = new ArrayList<>();
-        for (LocalDateTime date : attendanceDateList) {
-            int count = 0;
-            for (Attendance attendance : attendances) {
-                if (attendance.getAttendanceDate().equals(date)) {
-                    count += 1;
-                }
+        List<AttendancesDto> attendancesDtoList = new ArrayList<>();
+        for (Attendance attendance : attendances) {
+            List<AttendanceDataDto> attendanceDataList = attendanceDataService.findAttendanceDataList(attendance.getId());
+            if (attendanceDataList.isEmpty()) {
+                continue;
             }
-            AttendanceStatusDTO atsDTO = new AttendanceStatusDTO();
-            atsDTO.setDatetime(date);
-            atsDTO.setCount(count);
-
-            attendanceStatusDTOS.add(atsDTO);
+            log.info("attendanceDataList={}", Arrays.deepToString(attendanceDataList.toArray()));
+            AttendancesDto attendancesDto = new AttendancesDto();
+            attendancesDto.createAttendancesDto(attendance.getId(), attendance.getAttendanceDate(), attendanceDataList, attendanceDataList.size());
+            attendancesDtoList.add(attendancesDto);
         }
-        model.addAttribute("atsDTO", attendanceStatusDTOS);
 
-        return "attendances/attendanceStatus";
+        return attendancesDtoList;
     }
 
+    /**
+     * 출석 체크 수정 화면 요청
+     */
+    @GetMapping("/attendances/edit/{attendanceId}")
+    public EditAttendanceDto checkedAttendanceMembers(@PathVariable("attendanceId") Long attendanceId) {
+        List<CheckedMemberIdsDto> selectedMembers = attendanceDataRepository.findSelectedMembers(attendanceId);
+        Attendance findAttendance = attendanceRepository.findOne(attendanceId);
+        LocalDateTime attendanceDate = findAttendance.getAttendanceDate();
+        EditAttendanceDto editAttendanceDto = new EditAttendanceDto();
+        editAttendanceDto.createEditAttendanceDto(selectedMembers, attendanceDate);
+
+        return editAttendanceDto;
+    }
+
+    /**
+     * 출석 체크 수정
+     */
+    @PostMapping("/attendances/edit/{attendanceId}")
+    public void editAttendance(@RequestBody @Valid EditAttendanceCheckForm form, @PathVariable("attendanceId") Long attendanceId) {
+        log.info("form={}", form);
+        if (form.getMemberIds().isEmpty()) {
+            //react에 대충 400.. 에러를 내려줘야하거나 출석체크 화면으로 이동하게끔(가능?) 해야할 듯
+        }
+        attendanceService.editAttendance(attendanceId, form);
+    }
+
+    /**
+     * 출석 체크 삭제
+     */
+    @PostMapping("/attendances")
+    public void deleteAttendance(@RequestBody @Valid DeleteAttendanceForm form) {
+        log.info("form={}", form);
+        attendanceService.deleteAttendances(form.getAttendanceIds());
+    }
+
+
+
+    //이전 코드
     /**
      * 출석 체크 수정 화면 GET 요청
      */
@@ -151,7 +189,7 @@ public class AttendanceApiController {
         AttendanceForm form = new AttendanceForm();
 
         for (Attendance attendance : attendancesByDateTime) {
-            memberIds.add(attendance.getMember().getId());
+//            memberIds.add(attendance.getMember().getId());
         }
 
         form.setMemberIds(memberIds);
@@ -201,7 +239,7 @@ public class AttendanceApiController {
             Member member = new Member();
             member.setMemberId(memberId);
 
-            attendance.createAttendance(member, AttendanceStatus.ATTENDANCE, dateTime);
+//            attendance.createAttendance(member, AttendanceStatus.ATTENDANCE, dateTime);
             attendanceService.addAttendance(attendance);
         }
 

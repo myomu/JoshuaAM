@@ -17,19 +17,14 @@ public class Attendance {
 
     private LocalDateTime attendanceDate;
 
-    @Enumerated(EnumType.STRING)
-    private AttendanceStatus attendanceStatus;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
-
     @OneToMany(mappedBy = "attendance", cascade = CascadeType.ALL)
     private List<AttendanceData> attendanceDataList = new ArrayList<>();
 
-    public void createAttendance(Member member, AttendanceStatus attendanceStatus, LocalDateTime attendanceDate) {
-        this.member = member;
-        this.attendanceStatus= attendanceStatus;
+    public void createAttendance(LocalDateTime attendanceDate) {
         this.attendanceDate = attendanceDate;
+    }
+
+    public void editDateTime(LocalDateTime newAttendanceDate) {
+        this.attendanceDate = newAttendanceDate;
     }
 }

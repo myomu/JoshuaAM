@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import site.joshua.am.domain.Attendance;
+import site.joshua.am.domain.AttendanceData;
 import site.joshua.am.dto.AttendanceCheckDto;
 import site.joshua.am.dto.AttendanceDto;
 import site.joshua.am.dto.AttendanceMembersDto;
@@ -27,7 +28,8 @@ public class AttendanceRepository {
     }
 
     public List<Attendance> findAll() {
-        return em.createQuery("select a from Attendance a order by a.member.name", Attendance.class)
+        return em.createQuery("select a from Attendance a" +
+                        " order by a.attendanceDate desc", Attendance.class)
                 .getResultList();
     }
 
@@ -49,7 +51,8 @@ public class AttendanceRepository {
     public List<AttendanceDto> findAttendances() {
         return em.createQuery(
                 "select new site.joshua.am.dto.AttendanceDto(a.id, a.attendanceDate, a.attendanceStatus, m.id)" +
-                        " from Attendance a" +
+                        " from AttendanceData a" +
+
                         " join a.member m", AttendanceDto.class)
                 .getResultList();
     }
