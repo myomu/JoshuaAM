@@ -4,8 +4,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import site.joshua.am.domain.Group;
-import site.joshua.am.dto.AttendanceCheckDto;
-import site.joshua.am.dto.GroupsDto;
+import site.joshua.am.dto.GroupDto;
 
 import java.util.List;
 
@@ -32,10 +31,19 @@ public class GroupRepository {
         em.remove(group);
     }
 
-    public List<GroupsDto> findGroups() {
+    public List<GroupDto> findGroups() {
         return em.createQuery(
-                        "select new site.joshua.am.dto.GroupsDto(g.id, g.name)" +
-                                " from Group g", GroupsDto.class)
+                        "select new site.joshua.am.dto.GroupDto(g.id, g.name)" +
+                                " from Group g", GroupDto.class)
                 .getResultList();
+    }
+
+    public GroupDto findGroup(Long groupId) {
+        return em.createQuery(
+                "select new site.joshua.am.dto.GroupDto(g.id, g.name)" +
+                        " from Group g" +
+                        " where g.id =: groupId", GroupDto.class)
+                .setParameter("groupId", groupId)
+                .getSingleResult();
     }
 }

@@ -5,8 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import site.joshua.am.domain.*;
-import site.joshua.am.dto.AttendanceCheckDto;
-import site.joshua.am.dto.MembersDto;
+import site.joshua.am.dto.MemberDto;
 import site.joshua.am.form.CreateMemberForm;
 import site.joshua.am.repository.GroupRepository;
 import site.joshua.am.repository.MemberRepository;
@@ -28,6 +27,9 @@ public class MemberApiController {
     private final UserService userService;
     private final GroupRepository groupRepository;
 
+    /**
+     * 멤버 생성
+     */
     @PostMapping("members/create")
     public void createMember(@RequestBody @Valid CreateMemberForm form) {
         log.info("form={}", form);
@@ -43,9 +45,20 @@ public class MemberApiController {
         memberService.addMember(member);
     }
 
+    /**
+     * 멤버 목록 화면 요청
+     */
     @GetMapping("/members")
-    public List<MembersDto> attendanceCheck() {
+    public List<MemberDto> attendanceCheck() {
         return memberRepository.findMembers();
+    }
+
+    /**
+     * 멤버 수정 화면 요청
+     */
+    @GetMapping("/members/edit/{memberId}")
+    public MemberDto findMemberById(@PathVariable Long memberId) {
+        return memberRepository.findMember(memberId);
     }
 
 }

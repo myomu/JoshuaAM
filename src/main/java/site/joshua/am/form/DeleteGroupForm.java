@@ -6,6 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class DeleteAttendanceForm {
-    private List<Long> attendanceIds = new ArrayList<>();
+public class DeleteGroupForm {
+    private List<Long> groupIds = new ArrayList<>();
 }

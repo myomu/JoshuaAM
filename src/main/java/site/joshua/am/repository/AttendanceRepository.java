@@ -4,11 +4,9 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import site.joshua.am.domain.Attendance;
-import site.joshua.am.domain.AttendanceData;
 import site.joshua.am.dto.AttendanceCheckDto;
 import site.joshua.am.dto.AttendanceDto;
 import site.joshua.am.dto.AttendanceMembersDto;
-import site.joshua.am.dto.MembersDto;
 
 import java.time.LocalDateTime;
 import java.util.List;

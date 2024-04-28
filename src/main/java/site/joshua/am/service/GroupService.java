@@ -39,6 +39,29 @@ public class GroupService {
     }
 
     /**
+     * 조 수정
+     */
+    @Transactional
+    public void editGroup(Long groupId, String name) {
+        Group group = groupRepository.findOne(groupId);
+        group.editGroup(name);
+    }
+
+    /**
+     * 조 삭제
+     */
+    @Transactional
+    public void deleteGroups(List<Long> groupIds) {
+        for (Long groupId : groupIds) {
+            Group findGroup = groupRepository.findOne(groupId);
+            groupRepository.delete(findGroup);
+        }
+    }
+
+
+    // 이전 코드
+
+    /**
      * 조 삭제
      */
     @Transactional
@@ -48,13 +71,6 @@ public class GroupService {
         return groupId;
     }
 
-    /**
-     * 조 수정
-     */
-    @Transactional
-    public void editGroup(Long groupId, String name) {
-        Group group = groupRepository.findOne(groupId);
-        group.editGroup(name);
-    }
+
 
 }
