@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import site.joshua.am.domain.Gender;
 import site.joshua.am.domain.Group;
 import site.joshua.am.domain.Member;
+import site.joshua.am.form.EditMemberForm;
+import site.joshua.am.repository.GroupRepository;
 import site.joshua.am.repository.MemberRepository;
 
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.List;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final GroupRepository groupRepository;
 
     /**
      * 회원 추가
@@ -31,6 +34,23 @@ public class MemberService {
         memberRepository.save(member);
         return member.getId();
     }
+
+    @Transactional
+    public void editMember(EditMemberForm form, Long memberId) {
+        Member findMember = memberRepository.findOne(memberId);
+        Group findGroup = groupRepository.findOne(form.getGroup());
+        findMember.editMember(form.getName(), form.getAge(), form.getGender(), findGroup);
+    }
+
+    @Transactional
+    public void deleteMember(List<Long> memberIds) {
+        for (Long memberId : memberIds) {
+            Member findMember = memberRepository.findOne(memberId);
+            memberRepository.delete(findMember);
+        }
+    }
+
+    // 이전 코드
 
     /**
      * 모든 회원을 찾는다.

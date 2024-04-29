@@ -54,7 +54,7 @@ public class GroupApiController {
     /**
      * 그룹 수정 화면 요청
      */
-    @GetMapping("/groups/{groupId}")
+    @GetMapping("/groups/edit/{groupId}")
     public GroupDto findGroupById(@PathVariable Long groupId) {
         return groupRepository.findGroup(groupId);
     }

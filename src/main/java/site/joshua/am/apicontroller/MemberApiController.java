@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import site.joshua.am.domain.*;
 import site.joshua.am.dto.MemberDto;
 import site.joshua.am.form.CreateMemberForm;
+import site.joshua.am.form.DeleteMemberForm;
+import site.joshua.am.form.EditMemberForm;
 import site.joshua.am.repository.GroupRepository;
 import site.joshua.am.repository.MemberRepository;
 import site.joshua.am.repository.UserRepository;
@@ -59,6 +61,23 @@ public class MemberApiController {
     @GetMapping("/members/edit/{memberId}")
     public MemberDto findMemberById(@PathVariable Long memberId) {
         return memberRepository.findMember(memberId);
+    }
+
+    /**
+     * 멤버 수정
+     */
+    @PostMapping("/members/edit/{memberId}")
+    public void editMember(@RequestBody @Valid EditMemberForm form, @PathVariable Long memberId) {
+        memberService.editMember(form, memberId);
+    }
+
+    /**
+     * 멤버 삭제
+     */
+    @PostMapping("/members/delete")
+    public void deleteMember(@RequestBody @Valid DeleteMemberForm form) {
+        List<Long> memberIds = form.getMemberIds();
+        memberService.deleteMember(memberIds);
     }
 
 }
