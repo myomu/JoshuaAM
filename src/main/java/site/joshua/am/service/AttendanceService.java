@@ -48,28 +48,12 @@ public class AttendanceService {
     @Transactional
     public void editAttendance(Long attendanceId, EditAttendanceCheckForm form) {
 
-        // LocalDateTime 변수 생성.
-        LocalDateTime dateTime;
-        String year = form.getYear();
-        String month = form.getMonth();
-        String day = form.getDay();
-
-        log.info("year={}, month={}, day={}", year, month, day);
-
-        year = String.format("%04d", Integer.parseInt(form.getYear()));
-        month = String.format("%02d", Integer.parseInt(form.getMonth()));
-        day = String.format("%02d", Integer.parseInt(form.getDay()));
-
-        String date = year+"-"+month+"-"+day+" 00:00:00";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        dateTime = LocalDateTime.parse(date, formatter);
-
         LocalDateTime formAttendanceDate = form.getAttendanceDate();
         Attendance findAttendance = attendanceRepository.findOne(attendanceId);
 
         //받아온 form의 날짜와 차이가 있으면 수정
         if (!formAttendanceDate.isEqual(findAttendance.getAttendanceDate())) {
-            findAttendance.editDateTime(dateTime);
+            findAttendance.editDateTime(formAttendanceDate);
         }
 
         //attendanceId 로 Attendance 엔터티를 찾아서 해당 엔터티의 Id 값을 가지는 AttendanceData를 가져오고

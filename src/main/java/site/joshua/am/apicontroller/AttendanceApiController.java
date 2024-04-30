@@ -76,23 +76,11 @@ public class AttendanceApiController {
             //react에 대충 400.. 에러를 내려줘야하거나 출석체크 화면으로 이동하게끔(가능?) 해야할 듯
         }
 
-        // LocalDateTime 변수 생성.
         LocalDateTime dateTime;
-        String year = form.getYear();
-        String month = form.getMonth();
-        String day = form.getDay();
-
-        if (year == null || month == null || day == null) {
-            //연, 월, 일 중 하나라도 null 이면 현재 시간을 기준으로 생성
+        if (form.getAttendanceDate() == null) {
             dateTime = LocalDateTime.now();
         } else {
-            year = String.format("%04d", Integer.parseInt(form.getYear()));
-            month = String.format("%02d", Integer.parseInt(form.getMonth()));
-            day = String.format("%02d", Integer.parseInt(form.getDay()));
-
-            String date = year+"-"+month+"-"+day+" 00:00:00";
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            dateTime = LocalDateTime.parse(date, formatter);
+            dateTime = form.getAttendanceDate();
         }
 
         //Attendance 를 먼저 생성하고 DB에 저장

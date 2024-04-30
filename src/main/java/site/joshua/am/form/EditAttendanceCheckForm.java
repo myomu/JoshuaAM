@@ -11,9 +11,6 @@ public class EditAttendanceCheckForm {
 
     // 회원의 id를 List 에 담아 createAttendance 로 전달
     private List<Long> memberIds = new ArrayList<>();
-    private String year;
-    private String month;
-    private String day;
     private LocalDateTime attendanceDate;
 
 }
