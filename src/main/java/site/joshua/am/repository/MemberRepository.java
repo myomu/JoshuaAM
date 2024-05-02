@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import site.joshua.am.domain.Member;
 import site.joshua.am.dto.MemberDto;
+import site.joshua.am.dto.MemberListDto;
 
 import java.util.List;
 
@@ -37,11 +38,12 @@ public class MemberRepository {
         em.remove(member);
     }
 
-    public List<MemberDto> findMembers() {
+    public List<MemberListDto> findMembers() {
         return em.createQuery(
-                        "select new site.joshua.am.dto.MemberDto(m.id, m.name, m.age, m.gender, g.id, g.name, m.memberStatus)" +
+                        "select new site.joshua.am.dto.MemberListDto(m.id, m.name, m.age, m.gender, g.id, g.name, m.memberStatus)" +
                                 " from Member m" +
-                                " join m.group g", MemberDto.class)
+                                " join m.group g" +
+                                " order by m.id", MemberListDto.class)
                 .getResultList();
     }
 
@@ -54,7 +56,5 @@ public class MemberRepository {
                 .setParameter("memberId", memberId)
                 .getSingleResult();
     }
-
-
 
 }

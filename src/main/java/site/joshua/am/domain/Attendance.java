@@ -27,4 +27,5 @@ public class Attendance {
     public void editDateTime(LocalDateTime newAttendanceDate) {
         this.attendanceDate = newAttendanceDate;
     }
+
 }

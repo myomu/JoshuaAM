@@ -71,4 +71,21 @@ public class AttendanceRepository {
                 .getResultList();
     }
 
+    public Long countAttendanceByAttendanceDate(LocalDateTime startDate, LocalDateTime endDate) {
+        if (startDate == null || endDate == null) {
+            return em.createQuery(
+                            "select count(*)" +
+                                    " from Attendance a", Long.class)
+                    .getSingleResult();
+        } else {
+            return em.createQuery(
+                            "select count(*)" +
+                                    " from Attendance a" +
+                                    " where a.attendanceDate between :startDate and :endDate", Long.class)
+                    .setParameter("startDate", startDate)
+                    .setParameter("endDate", endDate)
+                    .getSingleResult();
+        }
+
+    }
 }

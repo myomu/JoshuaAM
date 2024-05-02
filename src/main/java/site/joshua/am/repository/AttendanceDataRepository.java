@@ -6,8 +6,9 @@ import org.springframework.stereotype.Repository;
 import site.joshua.am.domain.AttendanceData;
 import site.joshua.am.dto.AttendanceDataDto;
 import site.joshua.am.dto.CheckedMemberIdsDto;
-import site.joshua.am.dto.MemberDto;
+import site.joshua.am.domain.CountMemberByAttendanceDate;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -43,13 +44,38 @@ public class AttendanceDataRepository {
                 .getResultList();
     }
 
-    public List<MemberDto> findMembers() {
-        return em.createQuery(
-                        "select new site.joshua.am.dto.MemberDto(m.id, m.name, m.age, m.gender, g.name, m.memberStatus)" +
-                                " from Member m" +
-                                " join m.group g", MemberDto.class)
-                .getResultList();
-    }
+//    public List<MemberDto> findMembers() {
+//        return em.createQuery(
+//                        "select new site.joshua.am.dto.MemberDto(m.id, m.name, m.age, m.gender, g.name, m.memberStatus)" +
+//                                " from Member m" +
+//                                " join m.group g", MemberDto.class)
+//                .getResultList();
+//    }
 
+    public List<CountMemberByAttendanceDate> countMemberAttendanceByAttendanceDate(LocalDateTime startDate, LocalDateTime endDate) {
+
+        if (startDate == null || endDate == null) {
+            return em.createQuery(
+                            "select new site.joshua.am.domain.CountMemberByAttendanceDate(ad.member.id, COUNT(ad.member.id))" +
+                                    " from AttendanceData ad" +
+                                    " join ad.attendance a" +
+                                    " where ad.attendanceStatus = 'ATTENDANCE'" +
+                                    " group by ad.member.id" +
+                                    " order by ad.member.id", CountMemberByAttendanceDate.class)
+                    .getResultList();
+        } else {
+            return em.createQuery(
+                            "select new site.joshua.am.domain.CountMemberByAttendanceDate(ad.member.id, COUNT(ad.member.id))" +
+                                    " from AttendanceData ad" +
+                                    " join ad.attendance a" +
+                                    " where a.attendanceDate between :startDate and :endDate" +
+                                    " and ad.attendanceStatus = 'ATTENDANCE'" +
+                                    " group by ad.member.id" +
+                                    " order by ad.member.id", CountMemberByAttendanceDate.class)
+                    .setParameter("startDate", startDate)
+                    .setParameter("endDate", endDate)
+                    .getResultList();
+        }
+    }
 
 }

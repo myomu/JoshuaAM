@@ -6,16 +6,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import site.joshua.am.domain.*;
 import site.joshua.am.dto.MemberDto;
+import site.joshua.am.dto.MemberListDto;
 import site.joshua.am.form.CreateMemberForm;
 import site.joshua.am.form.DeleteMemberForm;
 import site.joshua.am.form.EditMemberForm;
-import site.joshua.am.repository.GroupRepository;
-import site.joshua.am.repository.MemberRepository;
-import site.joshua.am.repository.UserRepository;
+import site.joshua.am.repository.*;
 import site.joshua.am.service.MemberService;
 import site.joshua.am.service.UserService;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,6 +30,8 @@ public class MemberApiController {
     private final UserRepository userRepository;
     private final UserService userService;
     private final GroupRepository groupRepository;
+    private final AttendanceDataRepository attendanceDataRepository;
+    private final AttendanceRepository attendanceRepository;
 
     /**
      * 멤버 생성
@@ -51,8 +55,29 @@ public class MemberApiController {
      * 멤버 목록 화면 요청
      */
     @GetMapping("/members")
-    public List<MemberDto> attendanceCheck() {
-        return memberRepository.findMembers();
+    public List<MemberListDto> attendanceCheck(
+            @RequestParam(name = "startDate", required = false) LocalDateTime startDate,
+            @RequestParam(name = "endDate", required = false) LocalDateTime endDate
+    ) {
+
+        log.info("startDate={}, endDate={}", startDate, endDate);
+        Long countAttendance = attendanceRepository.countAttendanceByAttendanceDate(startDate, endDate);
+
+        List<MemberListDto> members = memberRepository.findMembers();
+        List<CountMemberByAttendanceDate> countMemberByAttendanceDates = attendanceDataRepository.countMemberAttendanceByAttendanceDate(startDate, endDate);
+
+        //출석률 계산하여 DTO 에 추가
+        for (MemberListDto member : members) {
+            for (CountMemberByAttendanceDate countMember : countMemberByAttendanceDates) {
+                if (member.getMemberId().equals(countMember.getMemberId())) {
+                    Double rate = Math.round((double) countMember.getMemberAttendanceCount() / countAttendance * 10000) / 100.0;
+                    member.setAttendanceRate(rate);
+                    break;
+                }
+            }
+        }
+
+        return members;
     }
 
     /**

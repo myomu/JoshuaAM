@@ -31,4 +31,5 @@ public class AttendanceData {
     public void editAttendanceStatus(AttendanceStatus attendanceStatus) {
         this.attendanceStatus = attendanceStatus;
     }
+
 }
