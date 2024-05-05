@@ -17,7 +17,7 @@ public class Attendance {
 
     private LocalDateTime attendanceDate;
 
-    @OneToMany(mappedBy = "attendance", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "attendance", cascade = CascadeType.REMOVE)
     private List<AttendanceData> attendanceDataList = new ArrayList<>();
 
     public void createAttendance(LocalDateTime attendanceDate) {

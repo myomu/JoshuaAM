@@ -15,7 +15,7 @@ import site.joshua.am.domain.User;
 import site.joshua.am.form.LoginForm;
 import site.joshua.am.service.LoginService;
 
-//@Controller
+@Controller
 @RequiredArgsConstructor
 public class LoginController {
 
@@ -53,7 +53,7 @@ public class LoginController {
         //세션에 로그인 회원 정보 보관
         session.setAttribute(SessionConst.LOGIN_USER, loginUser);
 
-        return "redirect:" + redirectURL;
+        return "redirect:/home";
     }
 
     /**

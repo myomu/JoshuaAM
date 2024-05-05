@@ -86,7 +86,6 @@ public class AttendanceApiController {
         //Attendance 를 먼저 생성하고 DB에 저장
         Attendance attendance = new Attendance();
         attendance.createAttendance(dateTime);
-        attendanceService.addAttendance(attendance);
 
         //Member를 모두 불러와서 Form에서 Check 된 Member만 AttendanceData의 Status를 ATTENDANCE 로 저장.
         List<Member> members = memberRepository.findAll();
@@ -97,6 +96,8 @@ public class AttendanceApiController {
             } else {
                 attendanceData.createAttendanceData(attendance, member, AttendanceStatus.ABSENCE);
             }
+            log.info("attendanceData={}", attendanceData);
+            log.info("findAttendance={}", attendance);
             attendanceDataService.addAttendanceData(attendanceData);
         }
     }

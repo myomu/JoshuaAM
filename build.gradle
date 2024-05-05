@@ -32,7 +32,7 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	//로컬 MySQL 테스트용
+	//MySQL Connection
 	implementation 'mysql:mysql-connector-java:8.0.32'
 }
 
@@ -42,33 +42,39 @@ tasks.named('test') {
 
 //SpringBoot 가 build 될 때 React 프로젝트가 먼저 build 되고
 //결과물을 SpringBoot 프로젝트의 build 결과물에 포함시키는 스크립트.
-/*def frontendDir = "$projectDir/src/main/front/joshuaam"
+
+
+def reactAppDir = "$projectDir/src/main/front/joshuaam"
 
 sourceSets {
 	main {
-		resources { srcDirs = ["$projectDir/src/main/resources"]
+		resources {
+			srcDirs = ["$projectDir/src/main/resources"]
 		}
 	}
 }
 
-processResources { dependsOn "copyReactBuildFiles" }
+processResources {
+	dependsOn "copyReactBuildFiles"
+}
 
 tasks.register('installReact', Exec) {
-	workingDir "$frontendDir"
-	inputs.dir "$frontendDir"
+	workingDir "$reactAppDir"
+	inputs.dir "$reactAppDir"
 	group = BasePlugin.BUILD_GROUP
 	if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
 		commandLine "npm.cmd", "audit", "fix"
 		commandLine 'npm.cmd', 'install'
 	} else {
-		commandLine "npm", "audit", "fix" commandLine 'npm', 'install'
+		commandLine "npm", "audit", "fix"
+		commandLine 'npm', 'install'
 	}
 }
 
 tasks.register('buildReact', Exec) {
 	dependsOn "installReact"
-	workingDir "$frontendDir"
-	inputs.dir "$frontendDir"
+	workingDir "$reactAppDir"
+	inputs.dir "$reactAppDir"
 	group = BasePlugin.BUILD_GROUP
 	if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
 		commandLine "npm.cmd", "run-script", "build"
@@ -79,6 +85,6 @@ tasks.register('buildReact', Exec) {
 
 tasks.register('copyReactBuildFiles', Copy) {
 	dependsOn "buildReact"
-	from "$frontendDir/build"
+	from "$reactAppDir/build"
 	into "$projectDir/src/main/resources/static"
-}*/
+}
