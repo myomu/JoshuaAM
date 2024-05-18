@@ -35,6 +35,9 @@ dependencies {
 	//MySQL Connection
 	implementation 'mysql:mysql-connector-java:8.0.32'
 
+	//MariaDB Connection
+	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+
 	// spring security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 
