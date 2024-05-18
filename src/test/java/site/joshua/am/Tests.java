@@ -12,7 +12,7 @@ public class Tests {
     @Test
     public void test1() throws Exception {
         //given
-        UserAuth auth = UserAuth.USER;
+        UserAuth auth = UserAuth.ROLE_USER;
         System.out.println(auth);
         //when
 
