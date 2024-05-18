@@ -40,7 +40,7 @@ public class MemberRepository {
 
     public List<MemberListDto> findMembers() {
         return em.createQuery(
-                        "select new site.joshua.am.dto.MemberListDto(m.id, m.name, m.age, m.gender, g.id, g.name, m.memberStatus)" +
+                        "select new site.joshua.am.dto.MemberListDto(m.id, m.name, m.dateOfBirth, m.gender, g.id, g.name, m.memberStatus)" +
                                 " from Member m" +
                                 " join m.group g" +
                                 " order by m.id", MemberListDto.class)
@@ -49,7 +49,7 @@ public class MemberRepository {
 
     public MemberDto findMember(Long memberId) {
         return em.createQuery(
-                "select new site.joshua.am.dto.MemberDto(m.id, m.name, m.age, m.gender, g.id, g.name, m.memberStatus)" +
+                "select new site.joshua.am.dto.MemberDto(m.id, m.name, m.dateOfBirth, m.gender, g.id, g.name, m.memberStatus)" +
                         " from Member m" +
                         " join m.group g" +
                         " where m.id =: memberId", MemberDto.class)

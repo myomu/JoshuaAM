@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum UserAuth {
-    ADMIN("관리자"), USER("사용자");
+    ROLE_ADMIN("관리자"), ROLE_USER("사용자");
 
     private final String description;
 

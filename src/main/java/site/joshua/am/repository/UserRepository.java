@@ -29,7 +29,7 @@ public class UserRepository {
 
     public Optional<User> findByLoginId(String loginId) {
         return findAll().stream()
-                .filter(u -> u.getLoginId().equals(loginId))
+                .filter(u -> u.getUserLoginId().equals(loginId))
                 .findFirst();
     }
 

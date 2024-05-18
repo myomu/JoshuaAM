@@ -9,16 +9,16 @@ public class MemberDto {
 
     private Long memberId;
     private String name;
-    private int age;
+    private int dateOfBirth;
     private Gender gender;
     private Long groupId;
     private String groupName;
     private MemberStatus memberStatus;
 
-    public MemberDto(Long memberId, String name, int age, Gender gender, Long groupId, String groupName, MemberStatus memberStatus) {
+    public MemberDto(Long memberId, String name, int dateOfBirth, Gender gender, Long groupId, String groupName, MemberStatus memberStatus) {
         this.memberId = memberId;
         this.name = name;
-        this.age = age;
+        this.dateOfBirth = dateOfBirth;
         this.gender = gender;
         this.groupId = groupId;
         this.groupName = groupName;

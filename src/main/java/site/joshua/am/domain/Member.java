@@ -21,7 +21,7 @@ public class Member {
     private String name;
 
     @NotNull //Integer 타입의 경우에는 NotNull을 사용하고 String 타입의 경우에는 NotEmpty를 사용한다.
-    private int age;
+    private int dateOfBirth; // age(나이) -> dateOfBirth(생년월일) 로 수정
 
     @NotNull //Enum 타입의 경우도 NotEmpty를 사용하지 않고 NotNull을 사용해야한다.
     @Enumerated(EnumType.STRING)
@@ -38,18 +38,17 @@ public class Member {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public void createMember(String name, int age, Gender gender, Group group, User user, MemberStatus memberStatus) {
+    public void createMember(String name, int dateOfBirth, Gender gender, Group group, MemberStatus memberStatus) {
         this.name = name;
-        this.age = age;
+        this.dateOfBirth = dateOfBirth;
         this.gender = gender;
         this.group = group;
-        this.user = user;
         this.memberStatus = memberStatus;
     }
 
-    public void editMember(String name, int age, Gender gender, Group group) {
+    public void editMember(String name, int dateOfBirth, Gender gender, Group group) {
         this.name = name;
-        this.age = age;
+        this.dateOfBirth = dateOfBirth;
         this.gender = gender;
         this.group = group;
     }

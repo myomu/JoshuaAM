@@ -40,14 +40,14 @@ public class MemberApiController {
     public void createMember(@RequestBody @Valid CreateMemberForm form) {
         log.info("form={}", form);
 
-        User user = new User();
-        String password = "joshua" + form.getName() + "**";
-        user.createUser(form.getName(), password, form.getName(), "", UserAuth.USER);
-        userService.addUser(user);
+//        User user = new User();
+//        String password = "joshua" + form.getName() + "**";
+//        user.createUser(form.getName(), password, form.getName(), "", UserAuth.USER);
+//        userService.addUser(user);
 
         Member member = new Member();
         Group findGroup = groupRepository.findOne(form.getGroup());
-        member.createMember(form.getName(), form.getAge(), form.getGender(), findGroup, user, MemberStatus.MEMBER);
+        member.createMember(form.getName(), form.getAge(), form.getGender(), findGroup, MemberStatus.MEMBER);
         memberService.addMember(member);
     }
 

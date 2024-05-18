@@ -21,7 +21,7 @@ public class HomeController {
     /**
      * 메인 홈 화면 로그인 유무에 따른 처리
      */
-    @RequestMapping("/")
+    //@RequestMapping("/")
     public String homeLogin(@Login User loginUser, Model model) {
 
         // 세션에 사용자가 없으면 로그인 form 으로 보낸다.
@@ -35,7 +35,7 @@ public class HomeController {
         return "redirect:/home";
     }
 
-    @GetMapping("/home")
+   // @GetMapping("/home")
     public String home() {
         return "index.html";
     }

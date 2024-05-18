@@ -34,6 +34,14 @@ dependencies {
 
 	//MySQL Connection
 	implementation 'mysql:mysql-connector-java:8.0.32'
+
+	// spring security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// jwt
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 }
 
 tasks.named('test') {
@@ -44,47 +52,47 @@ tasks.named('test') {
 //결과물을 SpringBoot 프로젝트의 build 결과물에 포함시키는 스크립트.
 
 
-def reactAppDir = "$projectDir/src/main/front/joshuaam"
-
-sourceSets {
-	main {
-		resources {
-			srcDirs = ["$projectDir/src/main/resources"]
-		}
-	}
-}
-
-processResources {
-	dependsOn "copyReactBuildFiles"
-}
-
-tasks.register('installReact', Exec) {
-	workingDir "$reactAppDir"
-	inputs.dir "$reactAppDir"
-	group = BasePlugin.BUILD_GROUP
-	if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-		commandLine "npm.cmd", "audit", "fix"
-		commandLine 'npm.cmd', 'install'
-	} else {
-		commandLine "npm", "audit", "fix"
-		commandLine 'npm', 'install'
-	}
-}
-
-tasks.register('buildReact', Exec) {
-	dependsOn "installReact"
-	workingDir "$reactAppDir"
-	inputs.dir "$reactAppDir"
-	group = BasePlugin.BUILD_GROUP
-	if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-		commandLine "npm.cmd", "run-script", "build"
-	} else {
-		commandLine "npm", "run-script", "build"
-	}
-}
-
-tasks.register('copyReactBuildFiles', Copy) {
-	dependsOn "buildReact"
-	from "$reactAppDir/build"
-	into "$projectDir/src/main/resources/static"
-}
+//def reactAppDir = "$projectDir/src/main/front/joshuaam"
+//
+//sourceSets {
+//	main {
+//		resources {
+//			srcDirs = ["$projectDir/src/main/resources"]
+//		}
+//	}
+//}
+//
+//processResources {
+//	dependsOn "copyReactBuildFiles"
+//}
+//
+//tasks.register('installReact', Exec) {
+//	workingDir "$reactAppDir"
+//	inputs.dir "$reactAppDir"
+//	group = BasePlugin.BUILD_GROUP
+//	if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+//		commandLine "npm.cmd", "audit", "fix"
+//		commandLine 'npm.cmd', 'install'
+//	} else {
+//		commandLine "npm", "audit", "fix"
+//		commandLine 'npm', 'install'
+//	}
+//}
+//
+//tasks.register('buildReact', Exec) {
+//	dependsOn "installReact"
+//	workingDir "$reactAppDir"
+//	inputs.dir "$reactAppDir"
+//	group = BasePlugin.BUILD_GROUP
+//	if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+//		commandLine "npm.cmd", "run-script", "build"
+//	} else {
+//		commandLine "npm", "run-script", "build"
+//	}
+//}
+//
+//tasks.register('copyReactBuildFiles', Copy) {
+//	dependsOn "buildReact"
+//	from "$reactAppDir/build"
+//	into "$projectDir/src/main/resources/static"
+//}
