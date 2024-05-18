@@ -29,9 +29,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")
-                .allowedOrigins(corsAllow)
-                .allowedMethods("GET", "POST", "PUT", "DELETE"); // 이것을 추가해줘야 CORS 오류가 안난다. 기본값으로 GET, HEAD, POST 추가는 해준다.
+                .allowedOrigins(corsAllow, "http://localhost:3000")
+                .allowedMethods("GET", "POST", "PUT", "DELETE") // 이것을 추가해줘야 CORS 오류가 안난다. 기본값으로 GET, HEAD, POST 추가는 해준다.
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 
     //404 Not Found 에러 문제 해결법

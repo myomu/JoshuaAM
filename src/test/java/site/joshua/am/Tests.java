@@ -33,4 +33,11 @@ public class Tests {
         System.out.println(LocalDateTime.now());
     }
 
+    @Test
+    public void test2() throws Exception {
+        String s = "-Q!G.&/g]T5Ud_wGs<@>;FG&q$$r4f~+|UOVWrJVFH/2DyL6TKAvk8)[8Do*uw|u";
+        int length = s.getBytes().length;
+        System.out.println(length);
+    }
+
 }
