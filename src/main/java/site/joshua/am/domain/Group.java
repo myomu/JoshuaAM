@@ -19,7 +19,7 @@ public class Group {
     @NotEmpty
     private String name;
 
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "group")
     private List<Member> members = new ArrayList<>();
 
     public void createGroup(String name) {

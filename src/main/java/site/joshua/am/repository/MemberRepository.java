@@ -42,7 +42,7 @@ public class MemberRepository {
         return em.createQuery(
                         "select new site.joshua.am.dto.MemberListDto(m.id, m.name, m.dateOfBirth, m.gender, g.id, g.name, m.memberStatus)" +
                                 " from Member m" +
-                                " join m.group g" +
+                                " left join m.group g" +
                                 " order by m.id", MemberListDto.class)
                 .getResultList();
     }
@@ -51,7 +51,7 @@ public class MemberRepository {
         return em.createQuery(
                 "select new site.joshua.am.dto.MemberDto(m.id, m.name, m.dateOfBirth, m.gender, g.id, g.name, m.memberStatus)" +
                         " from Member m" +
-                        " join m.group g" +
+                        " left join m.group g" +
                         " where m.id =: memberId", MemberDto.class)
                 .setParameter("memberId", memberId)
                 .getSingleResult();

@@ -93,6 +93,7 @@ public class MemberApiController {
      */
     @PostMapping("/members/edit/{memberId}")
     public void editMember(@RequestBody @Valid EditMemberForm form, @PathVariable Long memberId) {
+        log.info("EditMemberForm={}", form);
         memberService.editMember(form, memberId);
     }
 

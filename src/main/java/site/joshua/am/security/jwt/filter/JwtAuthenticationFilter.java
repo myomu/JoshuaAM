@@ -98,5 +98,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // { Authorization : Bearer + {jwt} }
         response.addHeader(JwtConstants.TOKEN_HEADER, JwtConstants.TOKEN_PREFIX + jwt);
         response.setStatus(HttpServletResponse.SC_OK);
+        log.info("response.getHeader : {}", response.getHeader(JwtConstants.TOKEN_HEADER));
     }
 }

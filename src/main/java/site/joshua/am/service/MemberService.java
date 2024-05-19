@@ -1,6 +1,8 @@
 package site.joshua.am.service;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.joshua.am.domain.Gender;
@@ -17,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberService {
 
+    private static final Logger log = LoggerFactory.getLogger(MemberService.class);
     private final MemberRepository memberRepository;
     private final GroupRepository groupRepository;
 
@@ -35,11 +38,17 @@ public class MemberService {
         return member.getId();
     }
 
+    // Member 를 수정할 때 Group 이 있을 경우와 null 일 경우를 분리해서 처리해준다.
     @Transactional
     public void editMember(EditMemberForm form, Long memberId) {
+        log.info("Test EditMemberForm : {}", form.toString());
         Member findMember = memberRepository.findOne(memberId);
-        Group findGroup = groupRepository.findOne(form.getGroup());
-        findMember.editMember(form.getName(), form.getAge(), form.getGender(), findGroup);
+        if (form.getGroup() != null && form.getGroup() != -1) {
+            Group findGroup = groupRepository.findOne(form.getGroup());
+            findMember.editMember(form.getName(), form.getDateOfBirth(), form.getGender(), findGroup);
+        } else {
+            findMember.editMemberNullGroup(form.getName(), form.getDateOfBirth(), form.getGender());
+        }
     }
 
     @Transactional

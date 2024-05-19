@@ -53,8 +53,19 @@ public class Member {
         this.group = group;
     }
 
+    public void editMemberNullGroup(String name, int dateOfBirth, Gender gender) {
+        this.name = name;
+        this.dateOfBirth = dateOfBirth;
+        this.gender = gender;
+        this.group = null;
+    }
+
     public void setMemberId(Long id) {
         this.id = id;
+    }
+
+    public void setNullGroupFK() {
+        this.group = null;
     }
 
 }

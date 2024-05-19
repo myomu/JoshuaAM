@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.joshua.am.domain.Group;
+import site.joshua.am.domain.Member;
 import site.joshua.am.repository.GroupRepository;
+import site.joshua.am.repository.MemberRepository;
 
 import java.util.List;
 
@@ -14,6 +16,7 @@ import java.util.List;
 public class GroupService {
 
     private final GroupRepository groupRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 조 추가
@@ -66,6 +69,15 @@ public class GroupService {
      */
     @Transactional
     public Long deleteGroup(Long groupId) {
+
+        // 삭제할 group 의 id 키를 외래키로 가지는 Member 를 다 찾아서 외래키 부분을 null 로 만들어 준다.
+        List<Member> findMembersByGroupId = memberRepository.findAllByGroupId(groupId);
+        for (Member member : findMembersByGroupId) {
+            member.setNullGroupFK();
+        }
+
+
+        // 이후 해당 group 을 삭제한다.
         Group group = groupRepository.findOne(groupId);
         groupRepository.delete(group);
         return groupId;

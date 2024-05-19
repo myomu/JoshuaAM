@@ -1,6 +1,7 @@
 package site.joshua.am.domain;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Data
 public class Attendance {
 
     @Id @GeneratedValue

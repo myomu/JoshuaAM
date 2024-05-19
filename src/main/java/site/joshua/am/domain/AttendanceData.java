@@ -1,17 +1,19 @@
 package site.joshua.am.domain;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 
 @Entity
 @Getter
+@Data
 public class AttendanceData {
 
     @Id @GeneratedValue
     @Column(name = "attendance_data_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "attendance_id")
     private Attendance attendance;
 
