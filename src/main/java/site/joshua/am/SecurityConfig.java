@@ -54,16 +54,17 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
 
         // CORS 설정
-        http.cors(corsCustomizer -> corsCustomizer.configurationSource(request -> {
-            CorsConfiguration config = new CorsConfiguration();
-            config.setAllowedOrigins(Arrays.asList(String.valueOf(corsProp), "http://localhost:3000"));
-            config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-            config.setAllowCredentials(true);
-            config.setAllowedHeaders(Collections.singletonList("*"));
-            config.setExposedHeaders(Collections.singletonList("Authorization"));
-            config.setMaxAge(3600L);
-            return config;
-        }));
+        // http.cors();
+//        http.cors(corsCustomizer -> corsCustomizer.configurationSource(request -> {
+//            CorsConfiguration config = new CorsConfiguration();
+//            config.setAllowedOrigins(Arrays.asList(String.valueOf(corsProp), "http://localhost:3000"));
+//            config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+//            config.setAllowCredentials(true);
+//            config.setAllowedHeaders(Collections.singletonList("*"));
+//            config.setExposedHeaders(Collections.singletonList("Authorization"));
+//            config.setMaxAge(3600L);
+//            return config;
+//        }));
 
         // 필터 설정
         http.addFilterAt(new JwtAuthenticationFilter(authenticationManager, jwtTokenProvider),

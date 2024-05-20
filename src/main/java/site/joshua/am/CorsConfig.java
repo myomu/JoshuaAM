@@ -1,7 +1,9 @@
 package site.joshua.am;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import site.joshua.am.prop.CorsProp;
 
@@ -10,11 +12,12 @@ import site.joshua.am.prop.CorsProp;
  */
 @Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class CorsConfig implements WebMvcConfigurer {
 
 //    @Value("${site.joshua.am.cors-allow}")
 //    private String corsAllow;
-    private CorsProp corsProp;
+    private final CorsProp corsProp;
 
     // CORS(Cross Origin Resource Sharing) 문제 해결법
 //    @Bean
@@ -31,12 +34,11 @@ public class CorsConfig implements WebMvcConfigurer {
 //        };
 //    }
 
-
-//    @Override
-//    public void addCorsMappings(CorsRegistry registry) {
-//        registry.addMapping("/**")
-//                .allowedOrigins(String.valueOf(corsProp), "http://localhost:3000")
-//                .allowedMethods("GET", "POST", "PUT", "DELETE")
-//                .allowedHeaders("*");
-//    }
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins(String.valueOf(corsProp), "http://localhost:3000")
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedHeaders("*");
+    }
 }
