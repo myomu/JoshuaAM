@@ -18,10 +18,8 @@ import site.joshua.am.security.jwt.constants.JwtConstants;
 
 import javax.crypto.SecretKey;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * JWT 토큰 관련 기능을 제공해주는 클래스
@@ -48,7 +46,7 @@ public class JwtTokenProvider {
                 // .signWith( 시크릿키, 알고리즘 )
                 .signWith(getShaKey(), Jwts.SIG.HS512) // 시그니처에서 사용할 시크릿키, 알고리즘 설정
                 .header()                                                 // 헤더 설정
-                .add("typ", JwtConstants.TOkEN_TYPE)              // typ : JWT
+                .add("typ", JwtConstants.TOKEN_TYPE)              // typ : JWT
                 .and()
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30)) //토큰 만료 시간 설정 (30분)
                 .claim("uno", "" + userNo) // 클레임 설정 : 사용자 번호
@@ -109,6 +107,7 @@ public class JwtTokenProvider {
 
             User user = new User();
 
+            // 토큰 유효 시 User 에 정보를 담아준다.
             try {
                 User userInfo = userRepository.findOne(no);
                 if (userInfo != null) {
@@ -119,40 +118,8 @@ public class JwtTokenProvider {
                 log.error("토큰 유효 -> DB 추가 정보 조회시 에러 발생...");
             }
 
-
-
-            /*user.setNo(no);
-            user.setUserId(userId);
-            // OK: 권한도 바로 Users 객체에 담아보기
-            List<UserAuth> authList = ((List<?>) roles )
-                    .stream()
-                    .map(auth -> new UserAuth(userId, auth.toString()) )
-                    .collect( Collectors.toList() );
-            user.setAuthList(authList);*/
-
-            // OK
-            // CustomUser 에 권한 담기
-//            List<SimpleGrantedAuthority> authorities = ((List<?>) roles )
-//                    .stream()
-//                    .map(auth -> new SimpleGrantedAuthority( (String) auth ))
-//                    .collect( Collectors.toList() );
             List<SimpleGrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority((String) roles));
-
-            // 토큰 유효하면
-            // name, email 도 담아주기
-            /*try {
-                User userInfo = userMapper.select(no);
-                if( userInfo != null ) {
-                    user.setName(userInfo.getName());
-                    user.setEmail(userInfo.getEmail());
-                }
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                log.error("토큰 유효 -> DB 추가 정보 조회시 에러 발생...");
-            }*/
-
-
 
             UserDetails userDetails = new CustomUser(user);
 
@@ -218,6 +185,7 @@ public class JwtTokenProvider {
 
     // secretKey -> signingKey
     private byte[] getSigningKey() {
+        log.info("getSigningKey : {} - key.length() : {}", jwtProp.getSecretKey(), jwtProp.getSecretKey().getBytes().length);
         return jwtProp.getSecretKey().getBytes();
     }
 

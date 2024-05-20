@@ -32,6 +32,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+        // request 요청 method, url 확인
+        log.info("Method : {}", request.getMethod());
+        log.info("RequestURI : {}", request.getRequestURI());
+
         // 헤더에서 JWT 토큰을 가져옴
         String header = request.getHeader(JwtConstants.TOKEN_HEADER);
         log.info("authorization {}", header);
