@@ -10,14 +10,20 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import site.joshua.am.prop.CorsProp;
 import site.joshua.am.security.custom.CustomUserDetailService;
 import site.joshua.am.security.jwt.filter.JwtAuthenticationFilter;
 import site.joshua.am.security.jwt.filter.JwtRequestFilter;
 import site.joshua.am.security.jwt.provider.JwtTokenProvider;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @Slf4j
 @Configuration
@@ -29,6 +35,7 @@ public class SecurityConfig {
 
     private final CustomUserDetailService customUserDetailService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final CorsProp corsProp;
 
     // SpringSecurity 5.5 이상
     // 시큐리티 설정
@@ -37,13 +44,25 @@ public class SecurityConfig {
         log.info("시큐리티 설정...");
 
         // 폼 기반 로그인 비활성화
-        http.formLogin(login -> login.disable() );
+        http.formLogin(AbstractHttpConfigurer::disable);
 
         // HTTP 기본 인증 비활성화
-        http.httpBasic(basic -> basic.disable() );
+        http.httpBasic(AbstractHttpConfigurer::disable);
 
         // CSRF(Cross-Site Request Forgery) 공격 방어 기능 비활성화
-        http.csrf(csrf -> csrf.disable() );
+        http.csrf(AbstractHttpConfigurer::disable);
+
+        // CORS 설정
+        http.cors(corsCustomizer -> corsCustomizer.configurationSource(request -> {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowedOrigins(Arrays.asList(String.valueOf(corsProp), "http://localhost:3000"));
+            config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+            config.setAllowCredentials(true);
+            config.setAllowedHeaders(Collections.singletonList("*"));
+            config.setExposedHeaders(Collections.singletonList("Authorization"));
+            config.setMaxAge(3600L);
+            return config;
+        }));
 
         // 필터 설정
         http.addFilterAt(new JwtAuthenticationFilter(authenticationManager, jwtTokenProvider),
@@ -57,6 +76,7 @@ public class SecurityConfig {
                 authorizeRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 서버측 정적 자원(static) 요청 허가
                         .requestMatchers("/").permitAll()
+                        .requestMatchers("/api/users/join").permitAll()
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/users/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")

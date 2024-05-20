@@ -5,7 +5,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -19,8 +18,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Value("${site.joshua.am.cors-allow}")
-    private String corsAllow;
 
     // 생성자
     public JwtRequestFilter(JwtTokenProvider jwtTokenProvider) {
@@ -39,7 +36,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // request 요청 method, url, corsAllow 확인
         log.info("Method : {}", request.getMethod());
         log.info("RequestURL : {}", request.getRequestURL().toString());
-        log.info("corsAllow : {}", corsAllow);
+        log.info("Header-Origin : {}", request.getHeader("Origin"));
 
 
         // 헤더에서 JWT 토큰을 가져옴
