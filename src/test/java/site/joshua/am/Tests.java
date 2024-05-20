@@ -35,7 +35,7 @@ public class Tests {
 
     @Test
     public void test2() throws Exception {
-        String s = "-Q!G.&/g]T5Ud_wGs<@>;FG&q$$r4f~+|UOVWrJVFH/2DyL6TKAvk8)[8Do*uw|u";
+        String s = "P/Bx7HgqR|=6w+?T%_em9<.4Ses6((@F+<tQH9TJr8}&8)4GX9(^)@U)oxv=Y}Dh";
         int length = s.getBytes().length;
         System.out.println(length*8);
     }

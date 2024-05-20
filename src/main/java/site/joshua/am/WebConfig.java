@@ -1,5 +1,6 @@
 package site.joshua.am;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.server.ErrorPage;
 import org.springframework.boot.web.server.ErrorPageRegistrar;
@@ -20,14 +21,18 @@ import java.util.List;
 /**
  * Spring Interceptor 설정
  */
+@Slf4j
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     @Value("${site.joshua.am.cors-allow}")
     private String corsAllow;
 
+
     //CORS(Cross Origin Resource Sharing) 문제 해결법
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+        log.info("corsAllow: {}", corsAllow);
+
         registry.addMapping("/**")
                 .allowedOrigins(corsAllow, "http://localhost:3000")
                 .allowedMethods("GET", "POST", "PUT", "DELETE") // 이것을 추가해줘야 CORS 오류가 안난다. 기본값으로 GET, HEAD, POST 추가는 해준다.

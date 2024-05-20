@@ -34,7 +34,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         // request 요청 method, url 확인
         log.info("Method : {}", request.getMethod());
-        log.info("RequestURI : {}", request.getRequestURI());
+        log.info("RequestURL : {}", request.getRequestURL().toString());
 
         // 헤더에서 JWT 토큰을 가져옴
         String header = request.getHeader(JwtConstants.TOKEN_HEADER);
