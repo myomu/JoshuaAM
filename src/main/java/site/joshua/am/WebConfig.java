@@ -22,18 +22,18 @@ import java.util.List;
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-//    @Value("${site.joshua.am.cors-allow}")
-//    private String corsAllow;
+    @Value("${site.joshua.am.cors-allow}")
+    private String corsAllow;
 
     //CORS(Cross Origin Resource Sharing) 문제 해결법
-//    @Override
-//    public void addCorsMappings(CorsRegistry registry) {
-//        registry.addMapping("/**")
-//                .allowedOrigins(corsAllow, "http://localhost:3000")
-//                .allowedMethods("GET", "POST", "PUT", "DELETE") // 이것을 추가해줘야 CORS 오류가 안난다. 기본값으로 GET, HEAD, POST 추가는 해준다.
-//                .allowedHeaders("*")
-//                .allowCredentials(true);
-//    }
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins(corsAllow, "http://localhost:3000")
+                .allowedMethods("GET", "POST", "PUT", "DELETE") // 이것을 추가해줘야 CORS 오류가 안난다. 기본값으로 GET, HEAD, POST 추가는 해준다.
+                .allowedHeaders("*")
+                .allowCredentials(true);
+    }
 
     //404 Not Found 에러 문제 해결법
     //react 는 route 를 통해 이동을 하게 되고 url 이 변경되는데 이를 서버에 요청해도 반환되는 페이지가 없어서 발생하는 문제
