@@ -11,6 +11,7 @@ import site.joshua.am.form.AttendanceForm;
 import site.joshua.am.form.CreateAttendanceCheckForm;
 import site.joshua.am.form.DeleteAttendanceForm;
 import site.joshua.am.form.EditAttendanceCheckForm;
+import site.joshua.am.prop.CorsProp;
 import site.joshua.am.repository.AttendanceDataRepository;
 import site.joshua.am.repository.AttendanceRepository;
 import site.joshua.am.repository.GroupRepository;
@@ -42,11 +43,15 @@ public class AttendanceApiController {
     private final AttendanceDataService attendanceDataService;
     private final AttendanceDataRepository attendanceDataRepository;
 
+    private final CorsProp corsProp;
     /**
      * 출석 체크 화면 GET 요청
      */
     @GetMapping("/attendances/check")
     public List<ListOfMembersDto> listOfMembers() {
+
+        log.info("CorsProp : {}", corsProp);
+
         List<Group> groups = groupRepository.findAll();
         List<AttendanceMembersDto> members = attendanceRepository.findListOfMembers();
         List<ListOfMembersDto> listOfMembersDtos = new ArrayList<>();
