@@ -56,7 +56,7 @@ public class SecurityConfig {
         // CORS 설정
         http.cors(corsCustomizer -> corsCustomizer.configurationSource(request -> {
             CorsConfiguration config = new CorsConfiguration();
-            config.setAllowedOrigins(Collections.singletonList("*"));
+            config.setAllowedOrigins(Arrays.asList(String.valueOf(corsProp), "http://localhost:3000"));
             config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
             config.setAllowCredentials(true);
             config.setAllowedHeaders(Collections.singletonList("*"));
