@@ -26,7 +26,7 @@ public class CustomUserDetailService implements UserDetailsService {
 //        User user = userMapper.login(username);
         User user = userRepository.findByLoginId(username).orElseGet(User::new);
 
-        if (user == null) {
+        if (user.getId() == null) {
             log.info("사용자 없음... (일치하는 아이디가 없음)");
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다 : " + username);
         }
