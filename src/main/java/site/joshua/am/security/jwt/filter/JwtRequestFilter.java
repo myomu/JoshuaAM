@@ -63,6 +63,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             // 로그인
             SecurityContextHolder.getContext().setAuthentication(authentication);
+        } else {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
 
         // 다음 필터 - 추가 확장시
