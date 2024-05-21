@@ -2,13 +2,16 @@
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 @Data
-@Component
-@ConfigurationProperties("site.joshua.am.cors") // site.joshuaam.jwt 경로 하위 속성들을 지정
+@Configuration
+@ConfigurationProperties(prefix = "site.joshua.am.cors") // site.joshuaam.jwt 경로 하위 속성들을 지정
 public class CorsProp {
 
-    // 시크릿키 : JWT 시그니처 암호화를 위한 정보
-    private String corsAllow;
+    // CORS 허용 주소
+    private String corsAllow1;
+    private String corsAllow2;
+    private String corsAllow3;
 }
