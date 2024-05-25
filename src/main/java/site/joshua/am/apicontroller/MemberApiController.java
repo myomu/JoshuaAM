@@ -3,6 +3,8 @@ package site.joshua.am.apicontroller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import site.joshua.am.domain.*;
 import site.joshua.am.dto.MemberDto;
@@ -14,10 +16,9 @@ import site.joshua.am.repository.*;
 import site.joshua.am.service.MemberService;
 import site.joshua.am.service.UserService;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,7 +48,7 @@ public class MemberApiController {
 
         Member member = new Member();
         Group findGroup = groupRepository.findOne(form.getGroup());
-        member.createMember(form.getName(), form.getAge(), form.getGender(), findGroup, MemberStatus.MEMBER);
+        member.createMember(form.getName(), form.getBirthdate(), form.getGender(), findGroup, MemberStatus.MEMBER);
         memberService.addMember(member);
     }
 
@@ -61,10 +62,11 @@ public class MemberApiController {
     ) {
 
         log.info("startDate={}, endDate={}", startDate, endDate);
-        Long countAttendance = attendanceRepository.countAttendanceByAttendanceDate(startDate, endDate);
+        LocalDateTime formattedEndDate = endDate != null ? endDate.with(LocalTime.MAX) : null; // 넘어온 endDate 날짜에서 하루의 마지막 시간대를 추가해준다.
+        Long countAttendance = attendanceRepository.countAttendanceByAttendanceDate(startDate, formattedEndDate);
 
         List<MemberListDto> members = memberRepository.findMembers();
-        List<CountMemberByAttendanceDate> countMemberByAttendanceDates = attendanceDataRepository.countMemberAttendanceByAttendanceDate(startDate, endDate);
+        List<CountMemberByAttendanceDate> countMemberByAttendanceDates = attendanceDataRepository.countMemberAttendanceByAttendanceDate(startDate, formattedEndDate);
 
         //출석률 계산하여 DTO 에 추가
         for (MemberListDto member : members) {
@@ -101,9 +103,18 @@ public class MemberApiController {
      * 멤버 삭제
      */
     @PostMapping("/members/delete")
-    public void deleteMember(@RequestBody @Valid DeleteMemberForm form) {
-        List<Long> memberIds = form.getMemberIds();
-        memberService.deleteMember(memberIds);
+    public ResponseEntity<?> deleteMember(@RequestBody @Valid DeleteMemberForm form) {
+        log.info("deleteMemberForm={}", form);
+        if (!form.getMemberIds().isEmpty()) {
+            List<Long> memberIds = form.getMemberIds();
+            // memberService.deleteMember(memberIds);
+            // 회원을 DB 에서 영구삭제 하는 것이 아니라 회원의 상태를 (회원) -> (비회원) 으로 변경
+            memberService.changeNonMember(memberIds);
+            return new ResponseEntity<>("Successfully deleted member", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Fail deleted member", HttpStatus.BAD_REQUEST);
+        }
+
     }
 
 }

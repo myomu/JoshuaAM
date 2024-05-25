@@ -8,10 +8,13 @@ import org.springframework.transaction.annotation.Transactional;
 import site.joshua.am.domain.Gender;
 import site.joshua.am.domain.Group;
 import site.joshua.am.domain.Member;
+import site.joshua.am.domain.MemberStatus;
 import site.joshua.am.form.EditMemberForm;
 import site.joshua.am.repository.GroupRepository;
 import site.joshua.am.repository.MemberRepository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -45,9 +48,17 @@ public class MemberService {
         Member findMember = memberRepository.findOne(memberId);
         if (form.getGroup() != null && form.getGroup() != -1) {
             Group findGroup = groupRepository.findOne(form.getGroup());
-            findMember.editMember(form.getName(), form.getDateOfBirth(), form.getGender(), findGroup);
+            findMember.editMember(form.getName(), form.getBirthdate(), form.getGender(), findGroup);
         } else {
-            findMember.editMemberNullGroup(form.getName(), form.getDateOfBirth(), form.getGender());
+            findMember.editMemberNullGroup(form.getName(), form.getBirthdate(), form.getGender());
+        }
+    }
+
+    @Transactional
+    public void changeNonMember(List<Long> memberIds) {
+        for (Long memberId : memberIds) {
+            Member findMember = memberRepository.findOne(memberId);
+            findMember.changeMemberStatus(MemberStatus.NON_MEMBER); // 비회원으로 변경
         }
     }
 
@@ -86,9 +97,9 @@ public class MemberService {
      * memberId 에 해당하는 회원의 정보를 수정한다.
      */
     @Transactional //변경 감지 방식
-    public void editMember(Long memberId, String name, int age, Gender gender, Group group) {
+    public void editMember(Long memberId, String name, LocalDateTime birthdate, Gender gender, Group group) {
         Member member = memberRepository.findOne(memberId);
-        member.editMember(name, age, gender, group);
+        member.editMember(name, birthdate, gender, group);
     }
 
     /**

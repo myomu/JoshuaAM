@@ -157,7 +157,7 @@ public class AttendanceApiController {
     /**
      * 출석 체크 삭제
      */
-    @PostMapping("/attendances")
+    @PostMapping("/attendances/delete")
     public void deleteAttendance(@RequestBody @Valid DeleteAttendanceForm form) {
         log.info("form={}", form);
         attendanceService.deleteAttendances(form.getAttendanceIds());

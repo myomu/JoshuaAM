@@ -1,5 +1,6 @@
 package site.joshua.am.security.jwt.filter;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -58,14 +59,19 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         Authentication authentication = jwtTokenProvider.getAuthentication(jwt);
 
         // 토큰 유효성 검사
+
         if (jwtTokenProvider.validateToken(jwt)) {
             log.info("유효한 JWT 토큰입니다.");
 
             // 로그인
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } else {
+            log.info("validateToken false");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("JWT Token is expired");
+            return;
         }
+
 
         // 다음 필터 - 추가 확장시
         filterChain.doFilter(request, response);

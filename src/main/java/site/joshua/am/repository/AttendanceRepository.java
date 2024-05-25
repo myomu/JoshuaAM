@@ -46,6 +46,7 @@ public class AttendanceRepository {
         em.remove(attendance);
     }
 
+    // 이전 코드
     public List<AttendanceDto> findAttendances() {
         return em.createQuery(
                 "select new site.joshua.am.dto.AttendanceDto(a.id, a.attendanceDate, a.attendanceStatus, m.id)" +
@@ -55,6 +56,7 @@ public class AttendanceRepository {
                 .getResultList();
     }
 
+    // 이전 코드
     public List<AttendanceCheckDto> findAttendanceCheckList() {
         return em.createQuery(
                 "select new site.joshua.am.dto.AttendanceCheckDto(m.id, m.name, g.id, g.name)" +
@@ -67,7 +69,8 @@ public class AttendanceRepository {
         return em.createQuery(
                         "select new site.joshua.am.dto.AttendanceMembersDto(m.id, m.name, g.id)" +
                                 " from Member m" +
-                                " join m.group g", AttendanceMembersDto.class)
+                                " join m.group g" +
+                                " where m.memberStatus = 'MEMBER'", AttendanceMembersDto.class)
                 .getResultList();
     }
 

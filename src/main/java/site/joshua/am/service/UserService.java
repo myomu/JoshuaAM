@@ -27,13 +27,6 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-//    @Transactional
-//    public Long addUser(User user) {
-//        userRepository.save(user);
-//        return user.getId();
-//    }
-
-
     /**
      * 회원 등록 (회원 가입)
      * 1. 비밀번호 암호화

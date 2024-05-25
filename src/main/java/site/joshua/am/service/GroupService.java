@@ -61,28 +61,4 @@ public class GroupService {
         }
     }
 
-
-    // 이전 코드
-
-    /**
-     * 조 삭제
-     */
-    @Transactional
-    public Long deleteGroup(Long groupId) {
-
-        // 삭제할 group 의 id 키를 외래키로 가지는 Member 를 다 찾아서 외래키 부분을 null 로 만들어 준다.
-        List<Member> findMembersByGroupId = memberRepository.findAllByGroupId(groupId);
-        for (Member member : findMembersByGroupId) {
-            member.setNullGroupFK();
-        }
-
-
-        // 이후 해당 group 을 삭제한다.
-        Group group = groupRepository.findOne(groupId);
-        groupRepository.delete(group);
-        return groupId;
-    }
-
-
-
 }

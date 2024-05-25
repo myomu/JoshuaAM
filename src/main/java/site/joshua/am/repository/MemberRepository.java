@@ -24,10 +24,11 @@ public class MemberRepository {
     }
 
     public List<Member> findAll() {
-        return em.createQuery("select m from Member m order by m.name", Member.class)
+        return em.createQuery("select m from Member m where m.memberStatus = 'MEMBER' order by m.name", Member.class)
                 .getResultList();
     }
 
+    // 이전 코드
     public List<Member> findAllByGroupId(Long groupId) {
         return em.createQuery("select m from Member m where m.group.id = :groupId", Member.class)
                 .setParameter("groupId", groupId)
@@ -40,16 +41,17 @@ public class MemberRepository {
 
     public List<MemberListDto> findMembers() {
         return em.createQuery(
-                        "select new site.joshua.am.dto.MemberListDto(m.id, m.name, m.dateOfBirth, m.gender, g.id, g.name, m.memberStatus)" +
+                        "select new site.joshua.am.dto.MemberListDto(m.id, m.name, m.birthdate, m.gender, g.id, g.name, m.memberStatus)" +
                                 " from Member m" +
                                 " left join m.group g" +
+                                " where m.memberStatus = 'MEMBER'" +
                                 " order by m.id", MemberListDto.class)
                 .getResultList();
     }
 
     public MemberDto findMember(Long memberId) {
         return em.createQuery(
-                "select new site.joshua.am.dto.MemberDto(m.id, m.name, m.dateOfBirth, m.gender, g.id, g.name, m.memberStatus)" +
+                "select new site.joshua.am.dto.MemberDto(m.id, m.name, m.birthdate, m.gender, g.id, g.name, m.memberStatus)" +
                         " from Member m" +
                         " left join m.group g" +
                         " where m.id =: memberId", MemberDto.class)

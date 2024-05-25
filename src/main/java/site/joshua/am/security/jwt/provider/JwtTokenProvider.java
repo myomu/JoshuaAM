@@ -48,7 +48,7 @@ public class JwtTokenProvider {
                 .header()                                                 // 헤더 설정
                 .add("typ", JwtConstants.TOKEN_TYPE)              // typ : JWT
                 .and()
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30)) //토큰 만료 시간 설정 (30분)
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30)) //토큰 만료 시간 설정 (30분 - 1000 * 60 * 30 => 1800.000s)
                 .claim("uno", "" + userNo) // 클레임 설정 : 사용자 번호
                 .claim("uid", userId) // PAYLOAD - uid : user (사용자 아이디)
                 .claim("rol", role) // PAYLOAD - rol : [ROLE_USER, ROLE,ADMIN] (권한 정보)
@@ -185,7 +185,7 @@ public class JwtTokenProvider {
 
     // secretKey -> signingKey
     private byte[] getSigningKey() {
-        log.info("getSigningKey : {} - key.length() : {}", jwtProp.getSecretKey(), jwtProp.getSecretKey().getBytes().length);
+        // log.info("getSigningKey : {} - key.length() : {}", jwtProp.getSecretKey(), jwtProp.getSecretKey().getBytes().length);
         return jwtProp.getSecretKey().getBytes();
     }
 
