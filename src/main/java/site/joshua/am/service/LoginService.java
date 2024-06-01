@@ -14,10 +14,10 @@ public class LoginService {
     /**
      * @return null 로그인 실패 시 null 반환
      */
-    public User login(String loginId, String password) {
-        return userRepository.findByLoginId(loginId)
-                .filter(u -> u.getUserPw().equals(password))
-                .orElse(null);
-    }
+//    public User login(String loginId, String password) {
+//        return userRepository.findByLoginId(loginId)
+//                .filter(u -> u.getUserPw().equals(password))
+//                .orElse(null);
+//    }
 
 }

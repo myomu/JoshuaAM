@@ -17,18 +17,10 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    @NotEmpty
     private String userLoginId;
-
-    @NotEmpty
     private String userPw;
-
-    @NotEmpty
     private String userName;
-
-    @NotEmpty
     private String email;
-
     private Date regDate;
     private Date updDate;
     private int enabled; // 활성화 여부. 1은 활성화, 0은 비활성화

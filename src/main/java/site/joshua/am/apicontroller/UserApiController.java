@@ -8,9 +8,13 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import site.joshua.am.domain.CustomUser;
+import site.joshua.am.domain.JoinAuthKey;
 import site.joshua.am.domain.User;
+import site.joshua.am.form.JoinForm;
+import site.joshua.am.repository.JoinAuthKeyRepository;
 import site.joshua.am.service.UserService;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -23,9 +27,10 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-public class UserController {
+public class UserApiController {
 
     private final UserService userService;
+    private final JoinAuthKeyRepository joinAuthKeyRepository;
 
     /**
      * 사용자 정보 조회
@@ -53,21 +58,34 @@ public class UserController {
 
     /**
      * 회원가입
-     * @param user
+     * @param form
      * @return
      * @throws Exception
      */
     @PostMapping("/join")
-    public ResponseEntity<?> join(@RequestBody User user) throws Exception {
-        log.info("[POST] - /users, user : {}", user.toString());
+    public ResponseEntity<?> join(@RequestBody JoinForm form) throws Exception {
+        log.info("[POST] - /users, user : {}", form.toString());
 
-        Optional<User> userLoginId = userService.findUserLoginId(user.getUserLoginId());
+        Optional<User> userLoginId = userService.findUserLoginId(form.getUserLoginId());
         if (userLoginId.isPresent()) {
             return new ResponseEntity<>("중복된 아이디 입니다.", HttpStatus.BAD_REQUEST);
         }
-        log.info("test--start");
-        Long result = userService.addUser(user);
-        log.info("test--end");
+
+        List<JoinAuthKey> keys = joinAuthKeyRepository.findKeys();
+
+        boolean checkAuthKey = false;
+        for (JoinAuthKey key : keys) {
+            if (form.getAuthKey().equals(key.getAuthKey())) {
+                checkAuthKey = true;
+            }
+        }
+
+        if (!checkAuthKey) {
+            return new ResponseEntity<>("인증키가 틀렸습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 회원가입 진행
+        Long result = userService.addUser(form);
 
         if( result > 0 ) {
             log.info("회원가입 성공! - SUCCESS");

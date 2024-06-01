@@ -20,8 +20,6 @@ public class AmApplication {
 
 		LocalDateTime now = LocalDateTime.now();
 		System.out.println("현재시간" + now);
-
-
 	}
 
 }

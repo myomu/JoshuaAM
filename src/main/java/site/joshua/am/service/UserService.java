@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.joshua.am.domain.User;
 import site.joshua.am.domain.UserAuth;
+import site.joshua.am.form.JoinForm;
 import site.joshua.am.repository.UserRepository;
 
 import java.util.Date;
@@ -34,15 +35,16 @@ public class UserService {
      * 3. 권한 등록
      */
     @Transactional
-    public Long addUser(User user) throws Exception {
+    public Long addUser(JoinForm form) throws Exception {
         // 비밀번호 암호화
-        String userPw = user.getUserPw();
+        String userPw = form.getUserPw();
         String encodedPw = passwordEncoder.encode(userPw);
-//        user.setEncodedPW(encodedPw);
         Date regDate = new Date();
         Date updateDate = new Date();
         int enabled = 1; // 계정 활성화
-        user.createUser(user.getUserLoginId(), encodedPw, user.getUserName(), user.getEmail(), regDate, updateDate, UserAuth.ROLE_USER, enabled);
+        User user = new User();
+        user.createUser(form.getUserLoginId(), encodedPw, form.getUserName(), form.getEmail(), regDate, updateDate, UserAuth.ROLE_USER, enabled);
+
         // 회원 등록
         userRepository.save(user);
 

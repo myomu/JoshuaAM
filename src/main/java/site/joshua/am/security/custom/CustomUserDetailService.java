@@ -23,21 +23,27 @@ public class CustomUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) {
         log.info("login - loadUserByUsername : {}", username);
-//        User user = userMapper.login(username);
-        User user = userRepository.findByLoginId(username).orElseGet(User::new);
+        /*User user = userRepository.findByLoginId(username).orElseGet(User::new);
 
         if (user.getId() == null) {
             log.info("사용자 없음... (일치하는 아이디가 없음)");
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다 : " + username);
-        }
-
-        log.info("user : {}", user.toString());
+        }*/
 
         // Users -> CustomUser
-        CustomUser customUser = new CustomUser(user);
+        CustomUser customUser = new CustomUser();
 
-        log.info("customUser: {}", customUser.toString());
+        try {
+            User user = userRepository.findByLoginId(username).orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다 : " + username));
+            // User user = findByLoginId.orElseGet(User::new);
+            log.info("user : {}", user);
+            customUser.setUser(user);
+        } catch (UsernameNotFoundException e) {
+            log.info("사용자 없음... (일치하는 아이디가 없음)");
+            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다 : " + username);
+        }
 
+        log.info("customUser: {}", customUser);
         return customUser;
     }
 }
