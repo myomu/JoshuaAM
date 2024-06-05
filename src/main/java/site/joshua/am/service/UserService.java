@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.joshua.am.domain.User;
 import site.joshua.am.domain.UserAuth;
+import site.joshua.am.form.EditUserForm;
 import site.joshua.am.form.JoinForm;
 import site.joshua.am.repository.UserRepository;
 
@@ -96,18 +97,15 @@ public class UserService {
      * 회원 정보 수정
      */
     @Transactional
-    public int editUser(User user) throws Exception {
+    public int editUser(EditUserForm user) throws Exception {
         Long userId = user.getId();
         User findUser = userRepository.findOne(userId);
 
         // 비밀번호 암호화와 변경감지를 이용하여 찾아온 User 에 비밀번호, 이름, 이메일 세팅
-        String userPw = findUser.getUserPw();
+        String userPw = user.getUserPw();
         String encodedPw = passwordEncoder.encode(userPw);
         findUser.editPasswordAndNameAndEmail(encodedPw, user.getUserName(), user.getEmail());
 
-//        int result = userMapper.update(user);
-
-//        return result;
         return 1;
     }
 

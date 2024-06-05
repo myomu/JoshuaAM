@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import site.joshua.am.domain.CustomUser;
 import site.joshua.am.domain.JoinAuthKey;
 import site.joshua.am.domain.User;
+import site.joshua.am.form.EditUserForm;
 import site.joshua.am.form.JoinForm;
 import site.joshua.am.repository.JoinAuthKeyRepository;
 import site.joshua.am.service.UserService;
@@ -99,15 +100,15 @@ public class UserApiController {
 
     /**
      * 회원 정보 수정
-     * @param user
+     * @param form
      * @return
      * @throws Exception
      */
     @Secured("ROLE_USER")           // USER 권한 설정
     @PutMapping("")
-    public ResponseEntity<?> update(@RequestBody User user) throws Exception {
+    public ResponseEntity<?> update(@RequestBody EditUserForm form) throws Exception {
         log.info("[PUT] - /users");
-        int result = userService.editUser(user);
+        int result = userService.editUser(form);
 
         if( result > 0 ) {
             log.info("회원수정 성공! - SUCCESS");
