@@ -45,7 +45,7 @@ public class MemberRepository {
                                 " from Member m" +
                                 " left join m.group g" +
                                 " where m.memberStatus = 'MEMBER'" +
-                                " order by m.id", MemberListDto.class)
+                                " order by m.name asc", MemberListDto.class)
                 .getResultList();
     }
 
