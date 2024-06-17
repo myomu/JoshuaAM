@@ -13,7 +13,6 @@ import site.joshua.am.form.EditMemberForm;
 import site.joshua.am.repository.GroupRepository;
 import site.joshua.am.repository.MemberRepository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -50,7 +49,7 @@ public class MemberService {
             Group findGroup = groupRepository.findOne(form.getGroup());
             findMember.editMember(form.getName(), form.getBirthdate(), form.getGender(), findGroup);
         } else {
-            findMember.editMemberNullGroup(form.getName(), form.getBirthdate(), form.getGender());
+            findMember.nullifyGroupId(form.getName(), form.getBirthdate(), form.getGender());
         }
     }
 

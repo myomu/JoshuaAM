@@ -19,7 +19,7 @@ public class GroupService {
     private final MemberRepository memberRepository;
 
     /**
-     * 조 추가
+     * 그룹 추가
      */
     @Transactional
     public Long addGroup(Group group) {
@@ -28,7 +28,7 @@ public class GroupService {
     }
 
     /**
-     * 모든 조를 찾는다.
+     * 모든 그룹을 찾는다.
      */
     public List<Group> findGroups() {
         return groupRepository.findAll();
@@ -42,7 +42,7 @@ public class GroupService {
     }
 
     /**
-     * 조 수정
+     * 그룹 수정
      */
     @Transactional
     public void editGroup(Long groupId, String name) {
@@ -51,12 +51,18 @@ public class GroupService {
     }
 
     /**
-     * 조 삭제
+     * 그룹 삭제
      */
     @Transactional
     public void deleteGroups(List<Long> groupIds) {
         for (Long groupId : groupIds) {
             Group findGroup = groupRepository.findOne(groupId);
+            List<Member> findMembers = memberRepository.findAllByGroupId(groupId);
+
+            // 그룹을 삭제하기 전에 그룹에 속해있는 멤버들의 groupId 값을 null 로 바꿔준다. 이로써 외래키가 있음으로 삭제가 불가능한 경우를 피할 수 있다.
+            for (Member member : findMembers) {
+                member.nullifyGroupId(member.getName(), member.getBirthdate(), member.getGender());
+            }
             groupRepository.delete(findGroup);
         }
     }

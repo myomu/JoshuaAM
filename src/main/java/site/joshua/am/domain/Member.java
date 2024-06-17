@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import org.springframework.cglib.core.Local;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -34,9 +32,9 @@ public class Member {
     @JoinColumn(name = "group_id")
     private Group group;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id")
+//    private User user;
 
     public void createMember(String name, LocalDateTime birthdate, Gender gender, Group group, MemberStatus memberStatus) {
         this.name = name;
@@ -53,7 +51,7 @@ public class Member {
         this.group = group;
     }
 
-    public void editMemberNullGroup(String name, LocalDateTime birthdate, Gender gender) {
+    public void nullifyGroupId(String name, LocalDateTime birthdate, Gender gender) {
         this.name = name;
         this.birthdate = birthdate;
         this.gender = gender;
