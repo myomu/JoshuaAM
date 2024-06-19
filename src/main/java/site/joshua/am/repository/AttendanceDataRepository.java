@@ -23,13 +23,23 @@ public class AttendanceDataRepository {
 
     public List<AttendanceDataDto> findAttendanceData(Long attendanceId) {
         return em.createQuery(
-                "select new site.joshua.am.dto.AttendanceDataDto(ad.id, ad.member.id, ad.member.name, ad.attendanceStatus)" +
+                "select new site.joshua.am.dto.AttendanceDataDto(ad.id, ad.member.id, ad.member.name, ad.attendanceStatus, ad.attendance.id)" +
                         " from AttendanceData ad" +
                         " join ad.attendance a" +
                         " where ad.attendanceStatus = 'ATTENDANCE'" +
                         " and ad.attendance.id = :attendanceId" +
                         " order by ad.member.name", AttendanceDataDto.class)
                 .setParameter("attendanceId", attendanceId)
+                .getResultList();
+    }
+
+    public List<AttendanceDataDto> findAttendanceDataV2() {
+        return em.createQuery(
+                "select new site.joshua.am.dto.AttendanceDataDto(ad.id, ad.member.id, ad.member.name, ad.attendanceStatus, a.id)" +
+                        " from AttendanceData ad" +
+                        " join ad.attendance a" +
+                        " where ad.attendanceStatus = 'ATTENDANCE'" +
+                        " order by a.attendanceDate desc, ad.member.name", AttendanceDataDto.class)
                 .getResultList();
     }
 

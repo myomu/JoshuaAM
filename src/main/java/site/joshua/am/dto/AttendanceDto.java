@@ -1,26 +1,22 @@
 package site.joshua.am.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
 import lombok.Data;
-import site.joshua.am.domain.AttendanceStatus;
-import site.joshua.am.domain.Member;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class AttendanceDto {
-
-//    @JsonIgnore
-    private Long id;
+    private Long attendanceId;
     private LocalDateTime attendanceDate;
-    private AttendanceStatus attendanceStatus;
-    private Long memberId;
+    private List<AttendanceDataDto> attendanceDataDtoList = new ArrayList<>();
+    private int totalMember;
 
-    public AttendanceDto(Long id, LocalDateTime attendanceDate, AttendanceStatus attendanceStatus, Long memberId) {
-        this.id = id;
+    public void createAttendancesDto(Long attendanceId, LocalDateTime attendanceDate, List<AttendanceDataDto> attendanceDataDtoList, int totalMember) {
+        this.attendanceId = attendanceId;
         this.attendanceDate = attendanceDate;
-        this.attendanceStatus = attendanceStatus;
-        this.memberId = memberId;
+        this.attendanceDataDtoList = attendanceDataDtoList;
+        this.totalMember = totalMember;
     }
 }

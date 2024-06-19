@@ -7,11 +7,14 @@ import org.springframework.transaction.annotation.Transactional;
 import site.joshua.am.domain.Attendance;
 import site.joshua.am.domain.AttendanceData;
 import site.joshua.am.domain.AttendanceStatus;
+import site.joshua.am.dto.AttendanceDataDto;
+import site.joshua.am.dto.AttendanceDto;
 import site.joshua.am.form.EditAttendanceCheckForm;
+import site.joshua.am.repository.AttendanceDataRepository;
 import site.joshua.am.repository.AttendanceRepository;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,14 +24,14 @@ import java.util.List;
 public class AttendanceService {
 
     private final AttendanceRepository attendanceRepository;
+    private final AttendanceDataRepository attendanceDataRepository;
 
     /**
      * 출석 추가
      */
     @Transactional
-    public Long addAttendance(Attendance attendance) {
+    public void addAttendance(Attendance attendance) {
         attendanceRepository.save(attendance);
-        return attendance.getId();
     }
 
     /**
@@ -51,7 +54,7 @@ public class AttendanceService {
         LocalDateTime formAttendanceDate = form.getAttendanceDate();
         Attendance findAttendance = attendanceRepository.findOne(attendanceId);
 
-        //받아온 form의 날짜와 차이가 있으면 수정
+        //받아온 form 의 날짜와 차이가 있으면 수정
         if (!formAttendanceDate.isEqual(findAttendance.getAttendanceDate())) {
             findAttendance.editDateTime(formAttendanceDate);
         }
@@ -68,6 +71,9 @@ public class AttendanceService {
         }
     }
 
+    /**
+     * 출석 삭제
+     */
     @Transactional
     public void deleteAttendances(List<Long> attendanceIds) {
         for (Long attendanceId : attendanceIds) {
@@ -76,29 +82,30 @@ public class AttendanceService {
         }
     }
 
-    //이전 코드
-
     /**
-     * 중복되지 않는 날짜를 List 로 반환. 내림차순 정렬로 보낸다.
+     * /attendances 요청에 따른 출석 List 를 반환한다.
+     * 먼저 모든 Attendance 를 찾고 각 Attendance 의 id 에 해당하는 AttendanceData 를 찾는다.
+     * 그리고 AttendancesDto 에 넣고 이것을 다시 AttendancesDtoList 에 넣어서 반환한다.
      */
-    public List<LocalDateTime> findNoDuplicateDate() {
-        return attendanceRepository.findNoDuplicateDate();
+    public List<AttendanceDto> getAttendances() {
+        List<Attendance> attendances = findAttendances();
+        List<AttendanceDto> attendanceDtoList = new ArrayList<>();
+
+        List<AttendanceDataDto> attendanceDataV2 = attendanceDataRepository.findAttendanceDataV2();
+        for (Attendance attendance : attendances) {
+            List<AttendanceDataDto> selectedAttendanceData = new ArrayList<>();
+
+            for (AttendanceDataDto attendanceDataDto : attendanceDataV2) {
+                if (attendance.getId().equals(attendanceDataDto.getAttendanceId())) {
+                    selectedAttendanceData.add(attendanceDataDto);
+                }
+            }
+            AttendanceDto attendanceDto = new AttendanceDto();
+            attendanceDto.createAttendancesDto(attendance.getId(), attendance.getAttendanceDate(), selectedAttendanceData, selectedAttendanceData.size());
+            attendanceDtoList.add(attendanceDto);
+        }
+
+        return attendanceDtoList;
     }
 
-    /**
-     * dateTime 에 해당하는 출석들을 찾아 List 로 반환
-     */
-    public List<Attendance> findAttendancesByDateTime(LocalDateTime dateTime) {
-        return attendanceRepository.findAllByDateTime(dateTime);
-    }
-
-    /**
-     * 출석 삭제
-     */
-    @Transactional
-    public Long deleteAttendance(Long attendanceId) {
-        Attendance attendance = attendanceRepository.findOne(attendanceId);
-        attendanceRepository.delete(attendance);
-        return attendance.getId();
-    }
 }

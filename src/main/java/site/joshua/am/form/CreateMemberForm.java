@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import site.joshua.am.domain.Gender;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter @Setter // Setter 필수!!

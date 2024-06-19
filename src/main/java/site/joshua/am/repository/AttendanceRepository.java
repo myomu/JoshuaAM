@@ -4,8 +4,6 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import site.joshua.am.domain.Attendance;
-import site.joshua.am.dto.AttendanceCheckDto;
-import site.joshua.am.dto.AttendanceDto;
 import site.joshua.am.dto.AttendanceMembersDto;
 
 import java.time.LocalDateTime;
@@ -31,11 +29,6 @@ public class AttendanceRepository {
                 .getResultList();
     }
 
-    public List<LocalDateTime> findNoDuplicateDate() {
-        return em.createQuery("select a.attendanceDate from Attendance a group by a.attendanceDate order by a.attendanceDate desc", LocalDateTime.class)
-                .getResultList();
-    }
-
     public List<Attendance> findAllByDateTime(LocalDateTime dateTime) {
         return em.createQuery("select a from Attendance a where a.attendanceDate = :dateTime", Attendance.class)
                 .setParameter("dateTime", dateTime)
@@ -46,24 +39,6 @@ public class AttendanceRepository {
         em.remove(attendance);
     }
 
-    // 이전 코드
-    public List<AttendanceDto> findAttendances() {
-        return em.createQuery(
-                "select new site.joshua.am.dto.AttendanceDto(a.id, a.attendanceDate, a.attendanceStatus, m.id)" +
-                        " from AttendanceData a" +
-
-                        " join a.member m", AttendanceDto.class)
-                .getResultList();
-    }
-
-    // 이전 코드
-    public List<AttendanceCheckDto> findAttendanceCheckList() {
-        return em.createQuery(
-                "select new site.joshua.am.dto.AttendanceCheckDto(m.id, m.name, g.id, g.name)" +
-                        " from Member m" +
-                        " join m.group g", AttendanceCheckDto.class)
-                .getResultList();
-    }
 
     public List<AttendanceMembersDto> findListOfMembers() {
         return em.createQuery(
@@ -89,6 +64,6 @@ public class AttendanceRepository {
                     .setParameter("endDate", endDate)
                     .getSingleResult();
         }
-
     }
+
 }

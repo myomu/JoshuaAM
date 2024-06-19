@@ -9,11 +9,13 @@ public class AttendanceDataDto {
     private Long memberId;
     private String memberName;
     private String attendanceStatus;
+    private Long attendanceId;
 
-    public AttendanceDataDto(Long attendanceDataId, Long memberId, String memberName, AttendanceStatus attendanceStatus) {
+    public AttendanceDataDto(Long attendanceDataId, Long memberId, String memberName, AttendanceStatus attendanceStatus, Long attendanceId) {
         this.attendanceDataId = attendanceDataId;
         this.memberId = memberId;
         this.memberName = memberName;
         this.attendanceStatus = attendanceStatus.getDescription();
+        this.attendanceId = attendanceId;
     }
 }

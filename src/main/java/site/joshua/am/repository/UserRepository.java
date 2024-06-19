@@ -33,11 +33,4 @@ public class UserRepository {
                 .findFirst();
     }
 
-//    public User findByLoginId(String loginId) {
-//        return em.createQuery("select u from User u " +
-//                "where u.userLoginId = :loginId", User.class)
-//                .setParameter("loginId", loginId)
-//                .getSingleResult();
-//    }
-
 }

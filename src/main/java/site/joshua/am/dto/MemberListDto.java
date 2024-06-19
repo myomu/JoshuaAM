@@ -4,7 +4,6 @@ import lombok.Data;
 import site.joshua.am.domain.Gender;
 import site.joshua.am.domain.MemberStatus;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
