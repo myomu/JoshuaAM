@@ -104,6 +104,7 @@ public class UserService {
         // 비밀번호 암호화와 변경감지를 이용하여 찾아온 User 에 비밀번호, 이름, 이메일 세팅
         String userPw = user.getUserPw();
         String encodedPw = passwordEncoder.encode(userPw);
+        findUser.setUpdDate(new Date()); // 변경한 날짜 등록
         findUser.editPasswordAndNameAndEmail(encodedPw, user.getUserName(), user.getEmail());
 
         return 1;

@@ -106,7 +106,7 @@ public class AttendanceApiController {
     /**
      * 출석 목록 화면 GET 요청
      */
-//    @GetMapping("/attendances")
+    //@GetMapping("/attendances")
     public List<AttendanceDto> attendanceListV1() {
         List<Attendance> attendances = attendanceService.findAttendances();
 
