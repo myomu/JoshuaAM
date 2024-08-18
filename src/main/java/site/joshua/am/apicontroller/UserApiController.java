@@ -67,7 +67,7 @@ public class UserApiController {
     public ResponseEntity<?> join(@RequestBody JoinForm form) throws Exception {
         log.info("[POST] - /users, user : {}", form.toString());
 
-        Optional<User> userLoginId = userService.findUserLoginId(form.getUserLoginId());
+        Optional<User> userLoginId = userService.findUserByLoginId(form.getUserLoginId());
         if (userLoginId.isPresent()) {
             return new ResponseEntity<>("중복된 아이디 입니다.", HttpStatus.BAD_REQUEST);
         }

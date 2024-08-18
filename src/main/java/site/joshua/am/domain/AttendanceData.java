@@ -1,12 +1,10 @@
 package site.joshua.am.domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 
 @Entity
 @Getter
-@Data
 public class AttendanceData {
 
     @Id @GeneratedValue

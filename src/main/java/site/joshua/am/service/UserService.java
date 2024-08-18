@@ -55,14 +55,14 @@ public class UserService {
     /**
      * 회원 아이디 조회
      */
-    public Optional<User> findUserLoginId(String loginId) {
+    public Optional<User> findUserByLoginId(String loginId) {
         return userRepository.findByLoginId(loginId);
     }
 
     /**
      * 회원 조회
      */
-    public User findMember(Long userId) throws Exception {
+    public User findUser(Long userId) throws Exception {
         return userRepository.findOne(userId);
     }
 
