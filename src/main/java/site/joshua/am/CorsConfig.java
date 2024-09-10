@@ -11,6 +11,8 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import site.joshua.am.prop.CorsProp;
 
+import java.util.Arrays;
+
 /**
  * Spring Interceptor 설정
  */
@@ -43,7 +45,7 @@ public class CorsConfig implements WebMvcConfigurer {
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedHeader("*");
         config.addExposedHeader("Authorization");
-        config.addAllowedMethod("*");
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }

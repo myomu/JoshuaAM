@@ -37,6 +37,7 @@ out/
 .vscode/
 
 ###Custom###
-src/main/resources/application.properties
-src/main/resources/application.yml
-src/main/resources/application_local.yml
+/src/main/resources/application.properties
+/src/main/resources/application.yml
+/src/main/resources/application_prod.yml
+/src/main/resources/application_dev.yml

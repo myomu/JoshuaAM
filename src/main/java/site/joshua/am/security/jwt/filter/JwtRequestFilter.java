@@ -1,8 +1,8 @@
 package site.joshua.am.security.jwt.filter;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -39,10 +39,24 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         log.info("RequestURL : {}", request.getRequestURL().toString());
         log.info("Header-Origin : {}", request.getHeader("Origin"));
 
+        // refresh-token 경로는 필터링하지 않음
+        if ("/api/auth/refresh-token".equals(request.getRequestURI())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         // 헤더에서 JWT 토큰을 가져옴
         String header = request.getHeader(JwtConstants.TOKEN_HEADER);
-        log.info("authorization {}", header);
+        log.info("authorization: {}", header);
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("refreshToken")) {
+                    log.info("refreshToken: {}", cookie.getValue());
+                }
+            }
+        }
 
         // JWT 토큰이 없으면 다음 필터로 이동
         // Bearer + {jwt}
@@ -72,8 +86,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             return;
         }
 
-
-        // 다음 필터 - 추가 확장시
+        // 다음 필터
         filterChain.doFilter(request, response);
     }
 

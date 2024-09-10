@@ -37,78 +37,62 @@ public class JwtTokenProvider {
 //    private final UserMapper userMapper;
 
     /**
-     * 토큰 생성
+     * JWT 토큰 생성 메서드
+     * @param userNo 사용자 번호
+     * @param userId 사용자 아이디
+     * @param role 사용자 권한
+     * @param expirationTime 만료 시간 (밀리초)
+     * @return 생성된 JWT 토큰
      */
-    public String createToken(Long userNo, String userId, UserAuth role) {
+    // 액세스 토큰 생성(Create Access Token)
+    public String createToken(Long userNo, String userId, UserAuth role, long expirationTime) {
 
         // JWT 토큰 생성
-        String jwt = Jwts.builder()
+        return Jwts.builder()
                 // .signWith( 시크릿키, 알고리즘 )
                 .signWith(getShaKey(), Jwts.SIG.HS512) // 시그니처에서 사용할 시크릿키, 알고리즘 설정
                 .header()                                                 // 헤더 설정
                 .add("typ", JwtConstants.TOKEN_TYPE)              // typ : JWT
                 .and()
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30)) //토큰 만료 시간 설정 (30분 - 1000 * 60 * 30 => 1800.000s)
+                .expiration(new Date(System.currentTimeMillis() + expirationTime)) //토큰 만료 시간 설정 (30분 - 1000 * 60 * 30 => 1800.000s)
                 .claim("uno", "" + userNo) // 클레임 설정 : 사용자 번호
                 .claim("uid", userId) // PAYLOAD - uid : user (사용자 아이디)
                 .claim("rol", role) // PAYLOAD - rol : [ROLE_USER, ROLE,ADMIN] (권한 정보)
                 .compact(); // 최종적으로 토큰 생성
-
-        log.info("jwt : {}", jwt);
-
-        return jwt;
     }
 
     /**
-     * 🔐➡👩‍💼 토큰 해석
-     *
-     * Authorization : Bearer + {jwt}  (authHeader)
-     * ➡ jwt 추출
-     * ➡ UsernamePasswordAuthenticationToken
-     * @param authHeader
-     * @return
-     * @throws Exception
+     * JWT 토큰 해석 메서드
+     * @param authHeader Authorization 헤더 (Bearer {jwt})
+     * @return 인증된 사용자 정보
      */
     public UsernamePasswordAuthenticationToken getAuthentication(String authHeader) {
-        if(authHeader == null || authHeader.length() == 0 )
-            return null;
+        if(authHeader == null || authHeader.isEmpty()) return null;
 
         try {
+            // accessToken(jwt) 추출
+            String accessToken = authHeader.replace(JwtConstants.TOKEN_PREFIX, "");
 
-            // jwt 추출
-            String jwt = authHeader.replace(JwtConstants.TOKEN_PREFIX, "");
-
-            // 🔐➡👩‍💼 JWT 파싱
-            Jws<Claims> parsedToken = Jwts.parser()
-                    .verifyWith(getShaKey())
-                    .build()
-                    .parseSignedClaims(jwt);
-
-            log.info("parsedToken : {}", parsedToken);
+            // JWT 파싱
+            Jws<Claims> parsedToken = parseToken(accessToken);
 
             // 인증된 사용자 번호
             String userNo = parsedToken.getPayload().get("uno").toString();
             Long no = ( userNo == null ? 0 : Long.parseLong(userNo) );
-            log.info("userNo : {}", userNo);
 
             // 인증된 사용자 아이디
             String userId = parsedToken.getPayload().get("uid").toString();
-            log.info("userId : {}", userId);
 
             // 인증된 사용자 권한
-            Claims claims = parsedToken.getPayload();
-            Object roles = claims.get("rol");
-            log.info("roles : {}", roles);
-
+            String role = parsedToken.getPayload().get("rol").toString();
 
             // 토큰에 id, userId 있는지 확인
-            if( userId == null || userId.isEmpty())
-                return null;
+            if( userId == null || userId.isEmpty()) return null;
 
-            User user = new User();
+            //User user = new User();
 
             // 토큰 유효 시 User 에 정보를 담아준다.
-            try {
+           /* try {
                 User userInfo = userRepository.findOne(no);
                 if (userInfo != null) {
                     user.setAuthToUser(no, userId, userInfo.getUserName(), userInfo.getEmail(), UserAuth.valueOf(roles.toString()));
@@ -116,10 +100,13 @@ public class JwtTokenProvider {
             } catch (Exception e) {
                 log.error(e.getMessage());
                 log.error("토큰 유효 -> DB 추가 정보 조회시 에러 발생...");
-            }
+            }*/
+
+            User user = userRepository.findOne(no);
+            if (user == null) return null;
 
             List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority((String) roles));
+            authorities.add(new SimpleGrantedAuthority(role));
 
             UserDetails userDetails = new CustomUser(user);
 
@@ -127,39 +114,28 @@ public class JwtTokenProvider {
             // new UsernamePasswordAuthenticationToken( 사용자정보객체, 비밀번호, 사용자의 권한(목록)  );
             return new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
 
-        } catch (ExpiredJwtException exception) {
-            log.warn("Request to parse expired JWT : {} failed : {}", authHeader, exception.getMessage());
-        } catch (UnsupportedJwtException exception) {
-            log.warn("Request to parse unsupported JWT : {} failed : {}", authHeader, exception.getMessage());
-        } catch (MalformedJwtException exception) {
-            log.warn("Request to parse invalid JWT : {} failed : {}", authHeader, exception.getMessage());
-        } catch (IllegalArgumentException exception) {
-            log.warn("Request to parse empty or null JWT : {} failed : {}", authHeader, exception.getMessage());
+            // JwtException 은 UnsupportedJwtException, MalformedJwtException, ExpiredJwtException 등을 포함하는 예외처리이다.
+        } catch (JwtException | IllegalArgumentException exception) {
+            log.warn("Request to parse JWT : {} failed : {}", authHeader, exception.getMessage());
+            return null;
         }
 
-        return null;
     }
 
     /**
      * 토큰 유효성 검사
      * - 만료기간이 넘었는지 판단
-     * @param jwt
+     * @param accessToken (jwt)
      * @return
      *  ⭕ true : 유효
      *  ❌ false : 만료
      */
-    public boolean validateToken(String jwt) {
+    public boolean validateToken(String accessToken) {
 
         try {
             // 🔐➡👩‍💼 JWT 파싱
-            Jws<Claims> parsedToken = Jwts.parser()
-                    .verifyWith(getShaKey())
-                    .build()
-                    .parseSignedClaims(jwt);
-
-            log.info("##### 토큰 만료 기간 #####");
-            log.info("-> {}", parsedToken.getPayload().getExpiration());
-
+            Jws<Claims> parsedToken = parseToken(accessToken);
+            log.info("##### 토큰 만료 기간 ##### -> {}", parsedToken.getPayload().getExpiration());
             Date exp = parsedToken.getPayload().getExpiration();
 
             // 만료 시간과 현재 시간 비교
@@ -180,7 +156,31 @@ public class JwtTokenProvider {
             return false;
         }
 
+    }
 
+    /**
+     * JWT 토큰 파싱 메서드
+     * @param token JWT 토큰
+     * @return 파싱된 클레임
+     */
+    private Jws<Claims> parseToken(String token) {
+        try {
+            // 이 부분을 아래와 같이 만듦.
+            /*Jws<Claims> parsedToken = Jwts.parser()
+                    .verifyWith(getShaKey())
+                    .build()
+                    .parseSignedClaims(jwt);*/
+            return Jwts.parser()
+                    .verifyWith(getShaKey())
+                    .build()
+                    .parseSignedClaims(token);
+        } catch (ExpiredJwtException e) {
+            log.warn("Expired JWT token");
+            throw e;
+        } catch (JwtException e) {
+            log.warn("Invalid JWT token");
+            throw e;
+        }
     }
 
     // secretKey -> signingKey

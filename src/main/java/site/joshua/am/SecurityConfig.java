@@ -22,6 +22,7 @@ import site.joshua.am.security.custom.CustomUserDetailService;
 import site.joshua.am.security.jwt.filter.JwtAuthenticationFilter;
 import site.joshua.am.security.jwt.filter.JwtRequestFilter;
 import site.joshua.am.security.jwt.provider.JwtTokenProvider;
+import site.joshua.am.service.RedisRefreshTokenService;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,6 +37,7 @@ public class SecurityConfig {
 
     private final CustomUserDetailService customUserDetailService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RedisRefreshTokenService redisRefreshTokenService;
     private final CorsConfig corsConfig;
 
     // SpringSecurity 5.5 이상
@@ -53,22 +55,9 @@ public class SecurityConfig {
         // CSRF(Cross-Site Request Forgery) 공격 방어 기능 비활성화
         http.csrf(AbstractHttpConfigurer::disable);
 
-        // CORS 설정
-        /*http.cors();
-        http.cors(corsCustomizer -> corsCustomizer.configurationSource(request -> {
-            CorsConfiguration config = new CorsConfiguration();
-            config.setAllowedOrigins(Arrays.asList(String.valueOf(corsProp), "http://localhost:3000"));
-            config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-            config.setAllowCredentials(true);
-            config.setAllowedHeaders(Collections.singletonList("*"));
-            config.setExposedHeaders(Collections.singletonList("Authorization"));
-            config.setMaxAge(3600L);
-            return config;
-        }));*/
-
         // 필터 설정
         // corsFilter -> JwtRequestFilter -> JwtAuthenticationFilter 순서
-        http.addFilterAt(new JwtAuthenticationFilter(authenticationManager, jwtTokenProvider),
+        http.addFilterAt(new JwtAuthenticationFilter(authenticationManager, jwtTokenProvider, redisRefreshTokenService),
                         UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(corsConfig.corsFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtRequestFilter(jwtTokenProvider),
@@ -81,10 +70,8 @@ public class SecurityConfig {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 서버측 정적 자원(static) 요청 허가
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/api/users/join").permitAll()
-                        .requestMatchers("/api/login/**").permitAll()
-//                        .requestMatchers("/api/users/info").permitAll()
-//                        .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
-//                        .requestMatchers("/users/**").permitAll()
+                        .requestMatchers("/api/login").permitAll()
+                        .requestMatchers("/api/auth/refresh-token").permitAll()
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
         );
@@ -103,10 +90,10 @@ public class SecurityConfig {
     }
 
     private AuthenticationManager authenticationManager;
+
     // AuthenticationManager 빈 등록
     @Bean
-    public AuthenticationManager authenticationManager(
-        AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         this.authenticationManager = authenticationConfiguration.getAuthenticationManager();
         return this.authenticationManager;
     }
