@@ -6,14 +6,19 @@ WORKDIR /app
 
 # 3. Gradle 빌드 파일과 소스 코드를 복사
 COPY build.gradle settings.gradle /app/
+COPY gradlew /app/
+COPY gradle /app/gradle
 COPY src /app/src
 
-# 4. Gradle 빌드를 실행하여 JAR 파일을 생성
+# 4. gradlew에 실행 권한 부여
+RUN chmod +x gradlew
+
+# 5. Gradle 빌드를 실행하여 JAR 파일을 생성
 RUN ./gradlew build --no-daemon
 
-# 5. 생성된 JAR 파일을 컨테이너로 복사
+# 6. 생성된 JAR 파일을 컨테이너로 복사
 ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} /app/app.jar
 
-# 6. 애플리케이션 실행
+# 7. 애플리케이션 실행
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
