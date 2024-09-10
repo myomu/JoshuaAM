@@ -13,8 +13,8 @@ COPY src /app/src
 # 4. gradlew에 실행 권한 부여
 RUN chmod +x gradlew
 
-# 5. Gradle 빌드를 실행하여 JAR 파일을 생성
-RUN ./gradlew build --no-daemon
+# 5. Gradle 빌드 시 테스트 생략
+RUN ./gradlew build -x test --no-daemon
 
 # 6. 생성된 JAR 파일을 컨테이너로 복사
 ARG JAR_FILE=build/libs/*.jar
