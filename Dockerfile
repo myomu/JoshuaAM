@@ -17,8 +17,9 @@ RUN chmod +x gradlew
 RUN ./gradlew build -x test --no-daemon
 
 # 6. 생성된 JAR 파일을 컨테이너로 복사
-ARG JAR_FILE=build/libs/*.jar
-COPY ${JAR_FILE} /app/app.jar
+# ARG JAR_FILE=build/libs/*.jar
+# COPY ${JAR_FILE} /app/app.jar
+COPY build/libs/am-0.0.1-SNAPSHOT.jar /app/app.jar
 
 # 7. 애플리케이션 실행
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
