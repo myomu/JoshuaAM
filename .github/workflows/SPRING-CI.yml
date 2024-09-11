@@ -13,38 +13,27 @@ jobs:
       - name: 코드 체크아웃
         uses: actions/checkout@v4
 
+      - name: Create .env file
+        run: |
+          echo DB_HOST=${{ secrets.DB_HOST }} >> .env
+          echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+          echo DB_NAME=${{ secrets.DB_NAME }} >> .env
+          echo DB_USERNAME=${{ secrets.DB_USERNAME }} >> .env
+          echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
+          echo AWS_ACCESS_KEY=${{  secrets.AWS_ACCESS_KEY  }} >> .env
+          echo AWS_SECRET_KEY=${{  secrets.AWS_SECRET_KEY  }} >> .env
+          echo AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }} >> .env
+          echo AWS_S3_REGION=${{ secrets.AWS_S3_REGION }} >> .env
+          echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+          echo CORS_ALLOW_1=${{ secrets.CORS_ALLOW_1 }} >> .env
+          echo CORS_ALLOW_2=${{ secrets.CORS_ALLOW_2 }} >> .env
+          
+          echo REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}
+
       - name: Docker 이미지 빌드 및 푸시
-        env:
-          DB_HOST: ${{secrets.DB_HOST}}
-          DB_PORT: ${{secrets.DB_PORT}}
-          DB_NAME: ${{secrets.DB_NAME}}
-          DB_USERNAME: ${{secrets.DB_USERNAME}}
-          DB_PASSWORD: ${{secrets.DB_PASSWORD}}
-
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          AWS_S3_BUCKET: ${{secrets.AWS_S3_BUCKET}}
-          AWS_S3_REGION: ${{secrets.AWS_S3_REGION}}
-
-          SECRET_KEY: ${{secrets.SECRET_KEY}}
-          CORS_ALLOW_1: ${{secrets.CORS_ALLOW_1}}
-          CORS_ALLOW_2: ${{secrets.CORS_ALLOW_2}}
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build \
-            --build-arg DB_HOST=${DB_HOST} \
-            --build-arg DB_PORT=${DB_PORT} \
-            --build-arg DB_NAME=${DB_NAME} \
-            --build-arg DB_USERNAME=${DB_USERNAME} \
-            --build-arg DB_PASSWORD=${DB_PASSWORD} \
-            --build-arg AWS_ACCESS_KEY=${AWS_ACCESS_KEY} \
-            --build-arg AWS_SECRET_KEY=${AWS_SECRET_KEY} \
-            --build-arg AWS_S3_BUCKET=${AWS_S3_BUCKET} \
-            --build-arg AWS_S3_REGION=${AWS_S3_REGION} \
-            --build-arg SECRET_KEY=${SECRET_KEY} \
-            --build-arg CORS_ALLOW_1=${CORS_ALLOW_1} \
-            --build-arg CORS_ALLOW_2=${CORS_ALLOW_2} \
-            -t ${{ secrets.DOCKER_REPO }}:server-v1.0.0 .
+          docker -t ${{ secrets.DOCKER_REPO }}:server-v1.0.0 .
           docker push ${{ secrets.DOCKER_REPO }}:server-v1.0.0
 
       - name: EC2에 SSH 접속 및 배포
