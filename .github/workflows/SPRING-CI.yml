@@ -31,7 +31,20 @@ jobs:
           CORS_ALLOW_2: ${{secrets.CORS_ALLOW_2}}
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build --no-cache -t ${{ secrets.DOCKER_REPO }}:server-v1.0.0 .
+          docker build \
+            --build-arg DB_HOST=${DB_HOST} \
+            --build-arg DB_PORT=${DB_PORT} \
+            --build-arg DB_NAME=${DB_NAME} \
+            --build-arg DB_USERNAME=${DB_USERNAME} \
+            --build-arg DB_PASSWORD=${DB_PASSWORD} \
+            --build-arg AWS_ACCESS_KEY=${AWS_ACCESS_KEY} \
+            --build-arg AWS_SECRET_KEY=${AWS_SECRET_KEY} \
+            --build-arg AWS_S3_BUCKET=${AWS_S3_BUCKET} \
+            --build-arg AWS_S3_REGION=${AWS_S3_REGION} \
+            --build-arg SECRET_KEY=${SECRET_KEY} \
+            --build-arg CORS_ALLOW_1=${CORS_ALLOW_1} \
+            --build-arg CORS_ALLOW_2=${CORS_ALLOW_2} \
+            -t ${{ secrets.DOCKER_REPO }}:server-v1.0.0 .
           docker push ${{ secrets.DOCKER_REPO }}:server-v1.0.0
 
       - name: EC2에 SSH 접속 및 배포
