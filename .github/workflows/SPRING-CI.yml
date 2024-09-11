@@ -29,6 +29,10 @@ jobs:
           echo CORS_ALLOW_2="${{ secrets.CORS_ALLOW_2 }}" >> .env
           echo REACT_APP_API_URL="${{ secrets.REACT_APP_API_URL }}" >> .env
 
+      - name: Copy .env file to EC2
+        run: |
+          scp -o StrictHostKeyChecking=no -i ${{ secrets.EC2_SSH_KEY }} .env ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/project/
+
       - name: Docker 이미지 빌드 및 푸시
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
