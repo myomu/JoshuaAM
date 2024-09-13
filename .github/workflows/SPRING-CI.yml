@@ -13,26 +13,6 @@ jobs:
       - name: 코드 체크아웃
         uses: actions/checkout@v4
 
-      - name: Create .env file
-        run: |
-          echo DB_HOST="${{ secrets.DB_HOST }}" >> .env
-          echo DB_PORT="${{ secrets.DB_PORT }}" >> .env
-          echo DB_NAME="${{ secrets.DB_NAME }}" >> .env
-          echo DB_USERNAME="${{ secrets.DB_USERNAME }}" >> .env
-          echo DB_PASSWORD="${{ secrets.DB_PASSWORD }}" >> .env
-          echo AWS_ACCESS_KEY="${{ secrets.AWS_ACCESS_KEY }}" >> .env
-          echo AWS_SECRET_KEY="${{ secrets.AWS_SECRET_KEY }}" >> .env
-          echo AWS_S3_BUCKET="${{ secrets.AWS_S3_BUCKET }}" >> .env
-          echo AWS_S3_REGION="${{ secrets.AWS_S3_REGION }}" >> .env
-          echo SECRET_KEY="${{ secrets.SECRET_KEY }}" >> .env
-          echo CORS_ALLOW_1="${{ secrets.CORS_ALLOW_1 }}" >> .env
-          echo CORS_ALLOW_2="${{ secrets.CORS_ALLOW_2 }}" >> .env
-          echo REACT_APP_API_URL="${{ secrets.REACT_APP_API_URL }}" >> .env
-
-      - name: Copy .env file to EC2
-        run: |
-          scp -o StrictHostKeyChecking=no -i ${{ secrets.EC2_SSH_KEY }} .env ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/project/
-
       - name: Docker 이미지 빌드 및 푸시
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
