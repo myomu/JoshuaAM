@@ -5,9 +5,6 @@ FROM gradle:7.5.1-jdk17 AS build
 # 2. 작업 디렉토리 설정
 WORKDIR /app
 
-# .env 파일 복사
-COPY .env .env
-
 # 3. Gradle 빌드 파일과 소스 코드를 복사
 COPY build.gradle settings.gradle /app/
 COPY gradlew /app/
