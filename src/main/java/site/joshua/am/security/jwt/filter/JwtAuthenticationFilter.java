@@ -135,7 +135,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .secure(true) // HTTPS 에서만 전송
                 .path("/")
                 .maxAge(7 * 24 * 60 * 60) // 7일 유효
-                .sameSite("Lax") // SameSite 설정
+                .sameSite("None") // SameSite 설정 -> Cloudtype 배포 환경에서 크로스 사이트로 인식이되어 "Lax" 설정을 하면 accessToken 이 삭제되는 문제가 발생하여 "None" 으로 변경함.
                 .build();
 
         // 응답에 쿠키 추가
