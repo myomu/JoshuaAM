@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -26,7 +27,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     /**
-     * JWT 요청 필터
+     * JWT 요청 필터 (Filter 중 첫번째 filter)
      * - request > headers > Authorization (JWT)
      * - JWT 토큰 유효성 검사
      */
@@ -39,50 +40,60 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         log.info("RequestURL : {}", request.getRequestURL().toString());
         log.info("Header-Origin : {}", request.getHeader("Origin"));
 
-        // refresh-token 경로는 필터링하지 않음
-        if ("/api/auth/refresh-token".equals(request.getRequestURI())) {
+        // refresh-token, login 경로는 필터링하지 않음
+        if (request.getRequestURI().equals("/api/auth/refresh-token") || request.getRequestURI().startsWith("/api/login")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         // 헤더에서 JWT 토큰을 가져옴
         String header = request.getHeader(JwtConstants.TOKEN_HEADER);
-        log.info("authorization: {}", header);
+        log.info("Authorization: {}", header);
 
         Cookie[] cookies = request.getCookies();
+        String deviceId = "";
+        String refreshToken = "";
         if (cookies != null) {
             for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("deviceId")) {
+                    deviceId = cookie.getValue();
+                }
                 if (cookie.getName().equals("refreshToken")) {
+                    refreshToken = cookie.getValue();
                     log.info("refreshToken: {}", cookie.getValue());
                 }
             }
         }
 
-        // JWT 토큰이 없으면 다음 필터로 이동
-        // Bearer + {jwt}
+        // JWT 토큰이 없으면 다음 필터로 이동 -> JwtAuthenticationFilter : Bearer + {jwt}
         if (header == null || !header.startsWith(JwtConstants.TOKEN_PREFIX)) {
-            filterChain.doFilter(request, response);
+            //filterChain.doFilter(request, response); <- /login 때문에 doFilter 를 해주었지면 위에서 처리해주었으므로 여기선 에러를 보내준다.
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Unauthorized: Token is missing");
             return;
         }
 
-        // JWT
-        // Bearer + {jwt} -> "Bearer " 제거
-        String jwt = header.replace(JwtConstants.TOKEN_PREFIX, "");
+        // AccessToken : Bearer + {jwt} -> "Bearer " 제거
+        String accessToken = header.replace(JwtConstants.TOKEN_PREFIX, "");
 
         // 토큰 해석
-        Authentication authentication = jwtTokenProvider.getAuthentication(jwt);
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken, refreshToken);
+//        if (authentication == null) {
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            response.getWriter().write("Authentication Failed");
+//            return;
+//        }
 
         // 토큰 유효성 검사
-
-        if (jwtTokenProvider.validateToken(jwt)) {
+        if (jwtTokenProvider.validateToken(accessToken, deviceId)) {
             log.info("유효한 JWT 토큰입니다.");
 
             // 로그인
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } else {
-            log.info("validateToken false");
+            log.info("Invalid Token");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("JWT Token is expired");
+            response.getWriter().write("JWT Token is expired or Invalid Token");
             return;
         }
 

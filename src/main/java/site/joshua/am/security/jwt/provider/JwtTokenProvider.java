@@ -13,13 +13,16 @@ import site.joshua.am.domain.User;
 import site.joshua.am.domain.UserAuth;
 import site.joshua.am.prop.JwtProp;
 import site.joshua.am.repository.UserRepository;
+import site.joshua.am.security.RefreshToken;
 import site.joshua.am.security.jwt.constants.JwtConstants;
+import site.joshua.am.service.RedisRefreshTokenService;
 
 
 import javax.crypto.SecretKey;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * JWT 토큰 관련 기능을 제공해주는 클래스
@@ -34,18 +37,18 @@ public class JwtTokenProvider {
 
     private final JwtProp jwtProp;
     private final UserRepository userRepository;
+    private final RedisRefreshTokenService redisRefreshTokenService;
 //    private final UserMapper userMapper;
 
     /**
      * JWT 토큰 생성 메서드
-     * @param userNo 사용자 번호
-     * @param userId 사용자 아이디
+     * @param username 사용자 아이디
      * @param role 사용자 권한
      * @param expirationTime 만료 시간 (밀리초)
      * @return 생성된 JWT 토큰
      */
     // 액세스 토큰 생성(Create Access Token)
-    public String createToken(Long userNo, String userId, UserAuth role, long expirationTime) {
+    public String createToken(String deviceId, String username, UserAuth role, long expirationTime) {
 
         // JWT 토큰 생성
         return Jwts.builder()
@@ -55,8 +58,9 @@ public class JwtTokenProvider {
                 .add("typ", JwtConstants.TOKEN_TYPE)              // typ : JWT
                 .and()
                 .expiration(new Date(System.currentTimeMillis() + expirationTime)) //토큰 만료 시간 설정 (30분 - 1000 * 60 * 30 => 1800.000s)
-                .claim("uno", "" + userNo) // 클레임 설정 : 사용자 번호
-                .claim("uid", userId) // PAYLOAD - uid : user (사용자 아이디)
+                // .claim("uno", "" + userNo) // 클레임 설정 : 사용자 번호
+                .claim("deviceId", deviceId) // deviceId : 로그인 한 기기의 고유 번호
+                .claim("username", username) // PAYLOAD - username : 사용자 아이디
                 .claim("rol", role) // PAYLOAD - rol : [ROLE_USER, ROLE,ADMIN] (권한 정보)
                 .compact(); // 최종적으로 토큰 생성
     }
@@ -66,7 +70,7 @@ public class JwtTokenProvider {
      * @param authHeader Authorization 헤더 (Bearer {jwt})
      * @return 인증된 사용자 정보
      */
-    public UsernamePasswordAuthenticationToken getAuthentication(String authHeader) {
+    public UsernamePasswordAuthenticationToken getAuthentication(String authHeader, String refreshToken) {
         if(authHeader == null || authHeader.isEmpty()) return null;
 
         try {
@@ -77,32 +81,28 @@ public class JwtTokenProvider {
             Jws<Claims> parsedToken = parseToken(accessToken);
 
             // 인증된 사용자 번호
-            String userNo = parsedToken.getPayload().get("uno").toString();
-            Long no = ( userNo == null ? 0 : Long.parseLong(userNo) );
+            //String userNo = parsedToken.getPayload().get("uno").toString();
+            //Long no = ( userNo == null ? 0 : Long.parseLong(userNo) );
+
+            RefreshToken findRefreshToken = redisRefreshTokenService.getRefreshToken("refreshToken:" + refreshToken);
+
+            if (findRefreshToken == null) {
+                log.error("Refresh token not found");
+                return null;
+            }
+
+            Long userId = findRefreshToken.getUserId();
 
             // 인증된 사용자 아이디
-            String userId = parsedToken.getPayload().get("uid").toString();
+            String username = parsedToken.getPayload().get("username").toString();
 
             // 인증된 사용자 권한
             String role = parsedToken.getPayload().get("rol").toString();
 
             // 토큰에 id, userId 있는지 확인
-            if( userId == null || userId.isEmpty()) return null;
+            if( username == null || username.isEmpty()) return null;
 
-            //User user = new User();
-
-            // 토큰 유효 시 User 에 정보를 담아준다.
-           /* try {
-                User userInfo = userRepository.findOne(no);
-                if (userInfo != null) {
-                    user.setAuthToUser(no, userId, userInfo.getUserName(), userInfo.getEmail(), UserAuth.valueOf(roles.toString()));
-                }
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                log.error("토큰 유효 -> DB 추가 정보 조회시 에러 발생...");
-            }*/
-
-            User user = userRepository.findOne(no);
+            User user = userRepository.findOne(userId);
             if (user == null) return null;
 
             List<SimpleGrantedAuthority> authorities = new ArrayList<>();
@@ -130,12 +130,21 @@ public class JwtTokenProvider {
      *  ⭕ true : 유효
      *  ❌ false : 만료
      */
-    public boolean validateToken(String accessToken) {
+    public boolean validateToken(String accessToken, String requestDeviceId) {
 
         try {
             // 🔐➡👩‍💼 JWT 파싱
             Jws<Claims> parsedToken = parseToken(accessToken);
             log.info("##### 토큰 만료 기간 ##### -> {}", parsedToken.getPayload().getExpiration());
+
+            String parsedDeviceId = parsedToken.getPayload().get("deviceId").toString();
+
+            // 요청 deviceId 와 accessToken 의 deviceId 값이 다르면 validation fail.
+            if (!requestDeviceId.equals(parsedDeviceId)) {
+                log.error("request deviceId is different from parsedDeviceId(AccessToken) : {}, {}", requestDeviceId, parsedDeviceId);
+                return false;
+            }
+
             Date exp = parsedToken.getPayload().getExpiration();
 
             // 만료 시간과 현재 시간 비교

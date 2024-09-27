@@ -40,14 +40,11 @@ public class AttendanceApiController {
     private final AttendanceDataService attendanceDataService;
     private final AttendanceDataRepository attendanceDataRepository;
 
-    private final CorsProp corsProp;
     /**
      * 출석 체크 화면 GET 요청
      */
     @GetMapping("/attendances/check")
     public List<ListOfMembersDto> listOfMembers() {
-
-        log.info("CorsProp : {}", corsProp);
 
         List<Group> groups = groupRepository.findAll();
         List<AttendanceMembersDto> members = attendanceRepository.findListOfMembers();

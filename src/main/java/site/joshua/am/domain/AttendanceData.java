@@ -12,14 +12,15 @@ public class AttendanceData {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "attendance_id")
+    @JoinColumn(name = "attendance_id", nullable = false)
     private Attendance attendance;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private AttendanceStatus attendanceStatus;
 
     public void createAttendanceData(Attendance attendance, Member member, AttendanceStatus attendanceStatus) {

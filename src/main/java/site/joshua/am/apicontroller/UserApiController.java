@@ -78,6 +78,7 @@ public class UserApiController {
         for (JoinAuthKey key : keys) {
             if (form.getAuthKey().equals(key.getAuthKey())) {
                 checkAuthKey = true;
+                break;
             }
         }
 

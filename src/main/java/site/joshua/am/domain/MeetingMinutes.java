@@ -15,10 +15,11 @@ public class MeetingMinutes {
     @Column(name = "minutes_id")
     private Long id;
 
+    @Column(nullable = false)
     private String title;
 
     @Lob
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
     @ManyToOne

@@ -13,5 +13,6 @@ public class JwtConstants {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String TOKEN_TYPE = "JWT";
     public static final String REFRESH_TOKEN = "refreshToken";
+    public static final String DEVICE_ID = "deviceId";
 
 }

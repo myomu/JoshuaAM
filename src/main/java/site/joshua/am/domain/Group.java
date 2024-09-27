@@ -17,6 +17,7 @@ public class Group {
     private Long id;
 
     @NotEmpty
+    @Column(nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "group")

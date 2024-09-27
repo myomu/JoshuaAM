@@ -15,6 +15,7 @@ public class Attendance {
     @Column(name = "attendance_id")
     private Long id;
 
+    @Column(nullable = false)
     private LocalDateTime attendanceDate;
 
     @OneToMany(mappedBy = "attendance", cascade = CascadeType.REMOVE)
