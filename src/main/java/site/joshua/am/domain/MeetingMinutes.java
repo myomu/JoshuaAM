@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 public class MeetingMinutes {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "minutes_id")
     private Long id;
 

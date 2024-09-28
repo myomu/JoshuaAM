@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public class AttendanceData {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "attendance_data_id")
     private Long id;
 

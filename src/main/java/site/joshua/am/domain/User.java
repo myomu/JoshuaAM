@@ -13,7 +13,7 @@ import java.util.Date;
 @Table(name = "Users") //User는 테이블 에약어로 되어있어 오류가 발생.
 public class User {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
 
