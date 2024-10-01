@@ -33,4 +33,13 @@ public class AttendanceData {
         this.attendanceStatus = attendanceStatus;
     }
 
+    @Override
+    public String toString() {
+        return "AttendanceData{" +
+                "id=" + id +
+                ", attendance=" + attendance +
+                ", memberId=" + member.getId() +
+                ", attendanceStatus=" + attendanceStatus +
+                '}';
+    }
 }

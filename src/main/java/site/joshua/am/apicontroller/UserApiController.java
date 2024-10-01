@@ -135,11 +135,11 @@ public class UserApiController {
         int result = userService.deleteUser(userId);
 
         if( result > 0 ) {
-            log.info("회원삭제 성공! - SUCCESS");
+            log.info("회원탈퇴 성공! - SUCCESS");
             return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
         }
         else {
-            log.info("회원삭제 실패! - FAIL");
+            log.info("회원탈퇴 실패! - FAIL");
             return new ResponseEntity<>("FAIL", HttpStatus.BAD_REQUEST);
         }
 

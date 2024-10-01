@@ -63,7 +63,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 사용자 인증정보 객체 생성
         Authentication authentication = new UsernamePasswordAuthenticationToken(username, password);
 
-
         try {
             // 사용자 인증 (로그인)
             authentication = authenticationManager.authenticate(authentication);

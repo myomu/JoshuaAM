@@ -40,8 +40,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         log.info("RequestURL : {}", request.getRequestURL().toString());
         log.info("Header-Origin : {}", request.getHeader("Origin"));
 
-        // refresh-token, login 경로는 필터링하지 않음
-        if (request.getRequestURI().equals("/api/auth/refresh-token") || request.getRequestURI().startsWith("/api/login")) {
+        // refresh-token, login, join 경로는 필터링하지 않음
+        if (request.getRequestURI().equals("/api/auth/refresh-token") || request.getRequestURI().startsWith("/api/login") || request.getRequestURI().startsWith("/api/users/join")) {
             filterChain.doFilter(request, response);
             return;
         }
