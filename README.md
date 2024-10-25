@@ -67,17 +67,18 @@ Joshua AM 은 각 회원의 정보와 출석률을 표로 정리하여 관리자
 > 서버로부터 받게되어 로그인 상태를 유지합니다.
 
 #### 1-1. 회원가입
-<img src="https://joshuaam-bucket.s3.ap-northeast-2.amazonaws.com/readmefile/%ED%9A%8C%EC%9B%90%EA%B0%80%EC%9E%85+%EC%98%81%EC%83%81.gif">
+![회원가입 영상-min](https://github.com/user-attachments/assets/c2a5e1e7-1308-4694-a323-ff5a9c22f66a)
 
 #### 1-2. 로그인
-<img src="https://joshuaam-bucket.s3.ap-northeast-2.amazonaws.com/readmefile/%EB%A1%9C%EA%B7%B8%EC%9D%B8+%EC%98%81%EC%83%81.gif">
+![로그인 영상-min](https://github.com/user-attachments/assets/bc99557e-292a-4a6a-9d23-9a749d752b95)
 
 
 ### 2. 메인화면
 > 메인화면은 마지막 출석 기록을 기준으로 12 주 간의 기록을 그래프로 나타내고 있으며
 > 최근 4 주 동안 1번도 출석하지 않은 회원 이름을 보여줍니다.
 
-<img src="https://joshuaam-bucket.s3.ap-northeast-2.amazonaws.com/readmefile/%EB%A9%94%EC%9D%B8+%ED%99%94%EB%A9%B4(%ED%99%88+%ED%99%94%EB%A9%B4).png">
+![메인 화면(홈 화면)](https://github.com/user-attachments/assets/b2c787ec-0c9d-4b3c-9147-88003483da95)
+
 
 ### 3. 출석
 > 날짜 선택을 통해 날짜를 선택할 수 있으며 선택하지 않으면 현재 날짜를 기준으로 저장됩니다.  
@@ -86,10 +87,10 @@ Joshua AM 은 각 회원의 정보와 출석률을 표로 정리하여 관리자
 > 왼쪽의 체크박스를 체크하여 출석을 삭제할 수 있습니다.
 
 #### 3-1. 출석체크
-<img src="https://joshuaam-bucket.s3.ap-northeast-2.amazonaws.com/readmefile/%EC%B6%9C%EC%84%9D%EC%B2%B4%ED%81%AC+%EC%98%81%EC%83%81.gif">
+![출석체크 영상-min](https://github.com/user-attachments/assets/c3b3c3e5-ad06-4a10-a122-e13cd53975bf)
 
 #### 3-2. 출석 수정, 삭제
-<img src="https://joshuaam-bucket.s3.ap-northeast-2.amazonaws.com/readmefile/%EC%B6%9C%EC%84%9D+%EC%88%98%EC%A0%95%2C+%EC%82%AD%EC%A0%9C%2C+%EB%AA%A9%EB%A1%9D+%EC%98%81%EC%83%81.gif">
+![출석 수정, 삭제, 목록 영상-min](https://github.com/user-attachments/assets/1a3d2250-8b95-4807-b0c6-ca9821ee3895)
 
 
 ### 4. 회원
@@ -97,16 +98,16 @@ Joshua AM 은 각 회원의 정보와 출석률을 표로 정리하여 관리자
 > 회원 목록에서는 출석 데이터를 기반으로 출석률이 표시됩니다. 상단의 날짜를 선택하여 특정 날짜 사이의 출석률도 확인할 수 있으며 취소를 누르면 초기화 됩니다.
 
 #### 4-1. 회원 추가
-<img src="https://joshuaam-bucket.s3.ap-northeast-2.amazonaws.com/readmefile/%ED%9A%8C%EC%9B%90+%EC%B6%94%EA%B0%80+%EC%98%81%EC%83%81.gif">
+![회원 추가 영상-min](https://github.com/user-attachments/assets/e9a4225d-6a8c-4d5e-9156-fe98bcb18ed4)
 
 #### 4-2. 회원 수정, 삭제
-<img src="https://joshuaam-bucket.s3.ap-northeast-2.amazonaws.com/readmefile/%ED%9A%8C%EC%9B%90+%EC%88%98%EC%A0%95%2C+%EC%82%AD%EC%A0%9C%2C+%EB%AA%A9%EB%A1%9D+%EC%98%81%EC%83%81.gif">
+![회원 수정, 삭제, 목록 영상-min](https://github.com/user-attachments/assets/4c26d2f5-e4de-407a-b91f-d679bdedb5d8)
 
 
 ### 5. 그룹
 > 회원들을 나누는 기준이 되는 그룹을 추가, 수정, 삭제를 할 수 있습니다.
 
-<img src="https://joshuaam-bucket.s3.ap-northeast-2.amazonaws.com/readmefile/%EA%B7%B8%EB%A3%B9+%EC%B6%94%EA%B0%80+%EC%88%98%EC%A0%95+%EC%82%AD%EC%A0%9C+%EC%98%81%EC%83%81.gif">
+![그룹 추가 수정 삭제 영상-min](https://github.com/user-attachments/assets/90d7f0c1-e01a-4eb5-8d05-be6ad8547d28)
 
 
 ### 6. 게시판
@@ -114,17 +115,17 @@ Joshua AM 은 각 회원의 정보와 출석률을 표로 정리하여 관리자
 > 마찬가지로 게시글 수정과 삭제가 가능하고 게시글의 이미지를 클릭하면 확대 또는 축소가 가능합니다.
 
 #### 6-1. 게시글 추가
-<img src="https://joshuaam-bucket.s3.ap-northeast-2.amazonaws.com/readmefile/%EA%B2%8C%EC%8B%9C%EA%B8%80+%EC%B6%94%EA%B0%80+%EC%98%81%EC%83%81.gif">
+![게시글 추가 영상-min](https://github.com/user-attachments/assets/a06a8d55-80ed-4b03-9ae5-88c18d3b6f81)
 
 #### 6-2. 게시글 수정, 삭제
-<img src="https://joshuaam-bucket.s3.ap-northeast-2.amazonaws.com/readmefile/%EA%B2%8C%EC%8B%9C%EA%B8%80+%EC%88%98%EC%A0%95+%EC%82%AD%EC%A0%9C+%EC%98%81%EC%83%81.gif">
+![게시글 수정 삭제 영상-min](https://github.com/user-attachments/assets/90afe404-dace-4987-bbb0-7b171a375b1c)
 
 
 ### 7. 프로필
 > 프로필 화면에서 사용자의 비밀번호, 이름, 이메일을 수정할 수 있습니다.  
 > 계정 정보 수정 버튼의 아래의 계정 탈퇴를 클릭하면 계정 탈퇴 또한 가능합니다.
 
-<img src="https://joshuaam-bucket.s3.ap-northeast-2.amazonaws.com/readmefile/%ED%94%84%EB%A1%9C%ED%95%84+%EC%88%98%EC%A0%95+%EC%98%81%EC%83%81.gif">
+![프로필 수정 영상-min](https://github.com/user-attachments/assets/304b982f-abb0-4f9d-bc83-eec597de5945)
 
 - - -
 
