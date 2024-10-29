@@ -30,19 +30,22 @@ jobs:
 
       - name: Fetch Secrets from AWS Secrets Manager and Generate application.yml
         run: |
-          # Fetch secrets from AWS Secrets Manager
-          DB_HOST=$(aws secretsmanager get-secret-value --secret-id your-db-host-secret-id --query SecretString --output text)
-          DB_PORT=$(aws secretsmanager get-secret-value --secret-id your-db-port-secret-id --query SecretString --output text)
-          DB_NAME=$(aws secretsmanager get-secret-value --secret-id your-db-name-secret-id --query SecretString --output text)
-          DB_USERNAME=$(aws secretsmanager get-secret-value --secret-id your-db-username-secret-id --query SecretString --output text)
-          DB_PASSWORD=$(aws secretsmanager get-secret-value --secret-id your-db-password-secret-id --query SecretString --output text)
-          AWS_ACCESS_KEY=$(aws secretsmanager get-secret-value --secret-id your-aws-access-key-secret-id --query SecretString --output text)
-          AWS_SECRET_KEY=$(aws secretsmanager get-secret-value --secret-id your-aws-secret-key-secret-id --query SecretString --output text)
-          AWS_S3_BUCKET=$(aws secretsmanager get-secret-value --secret-id your-aws-s3-bucket-secret-id --query SecretString --output text)
-          AWS_S3_REGION=$(aws secretsmanager get-secret-value --secret-id your-aws-s3-region-secret-id --query SecretString --output text)
-          SECRET_KEY=$(aws secretsmanager get-secret-value --secret-id your-secret-key-secret-id --query SecretString --output text)
-          CORS_ALLOW_1=$(aws secretsmanager get-secret-value --secret-id your-cors-allow-1-secret-id --query SecretString --output text)
-          CORS_ALLOW_2=$(aws secretsmanager get-secret-value --secret-id your-cors-allow-2-secret-id --query SecretString --output text)
+          # Fetch entire JSON secret from AWS Secrets Manager
+          SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id ${{ secrets.AWS_SECRETS_MANAGER_SECRET_NAME }} --query SecretString --output text)
+          
+          # Parse JSON and assign each key to a variable
+          DB_HOST=$(echo $SECRET_JSON | jq -r .DB_HOST)
+          DB_PORT=$(echo $SECRET_JSON | jq -r .DB_PORT)
+          DB_NAME=$(echo $SECRET_JSON | jq -r .DB_NAME)
+          DB_USERNAME=$(echo $SECRET_JSON | jq -r .DB_USERNAME)
+          DB_PASSWORD=$(echo $SECRET_JSON | jq -r .DB_PASSWORD)
+          AWS_ACCESS_KEY=$(echo $SECRET_JSON | jq -r .AWS_ACCESS_KEY)
+          AWS_SECRET_KEY=$(echo $SECRET_JSON | jq -r .AWS_SECRET_KEY)
+          AWS_S3_BUCKET=$(echo $SECRET_JSON | jq -r .AWS_S3_BUCKET)
+          AWS_S3_REGION=$(echo $SECRET_JSON | jq -r .AWS_S3_REGION)
+          SECRET_KEY=$(echo $SECRET_JSON | jq -r .SECRET_KEY)
+          CORS_ALLOW_1=$(echo $SECRET_JSON | jq -r .CORS_ALLOW_1)
+          CORS_ALLOW_2=$(echo $SECRET_JSON | jq -r .CORS_ALLOW_2)
           
           # Generate application.yml file
           cat <<EOF > src/main/resources/application.yml
