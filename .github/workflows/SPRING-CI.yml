@@ -43,6 +43,8 @@ jobs:
           AWS_SECRET_KEY=$(echo $SECRET_JSON | jq -r .AWS_SECRET_KEY)
           AWS_S3_BUCKET=$(echo $SECRET_JSON | jq -r .AWS_S3_BUCKET)
           AWS_S3_REGION=$(echo $SECRET_JSON | jq -r .AWS_S3_REGION)
+          REDIS_HOST=$(echo $SECRET_JSON | jq -r .REDIS_HOST)
+          REDIS_PORT=$(echo $SECRET_JSON | jq -r .REDIS_PORT)
           SECRET_KEY=$(echo $SECRET_JSON | jq -r .SECRET_KEY)
           CORS_ALLOW_1=$(echo $SECRET_JSON | jq -r .CORS_ALLOW_1)
           CORS_ALLOW_2=$(echo $SECRET_JSON | jq -r .CORS_ALLOW_2)
@@ -80,8 +82,8 @@ jobs:
           
             data:
               redis:
-                host: localhost
-                port: 6379
+                host: ${REDIS_HOST}
+                port: ${REDIS_PORT}
           
           site:
             joshua:
