@@ -41,3 +41,6 @@ out/
 /src/main/resources/application.yml
 /src/main/resources/application_prod.yml
 /src/main/resources/application_dev.yml
+/src/main/resources/backup_application.yml
+/src/test/java/site/joshua/am/service
+/src/test/resources/application.yml
