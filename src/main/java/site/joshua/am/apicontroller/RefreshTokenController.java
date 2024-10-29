@@ -94,6 +94,7 @@ public class RefreshTokenController {
                     .path("/")
                     .httpOnly(true)
                     .secure(true)
+                    .sameSite("None")
                     .maxAge(0) // 쿠키 만료
                     .build();
 
@@ -101,6 +102,7 @@ public class RefreshTokenController {
                     .path("/")
                     .httpOnly(true)
                     .secure(true)
+                    .sameSite("None")
                     .maxAge(0) // 쿠키 만료
                     .build();
 
