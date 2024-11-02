@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import site.joshua.am.prop.CorsProp;
 
@@ -19,20 +19,18 @@ import java.util.Arrays;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class CorsConfig implements WebMvcConfigurer {
+public class WebConfig implements WebMvcConfigurer {
 
     private final CorsProp corsProp;
+    private final RateLimitConfig.RateLimitInterceptor rateLimitInterceptor;
 
-//    @Override
-//    public void addCorsMappings(CorsRegistry registry) {
-//        registry.addMapping("/**")
-//                .allowedOrigins(corsProp.getCorsAllow1(), corsProp.getCorsAllow2(), corsProp.getCorsAllow3(), "http://localhost:3000")
-//                //.allowedOriginPatterns("*")
-//                .allowedMethods("GET", "POST", "PUT", "DELETE")
-//                .allowedHeaders("*")
-//                .exposedHeaders("Authorization")
-//                .allowCredentials(true);
-//    }
+    /**
+     * Rate Limiting Interceptor 추가
+     */
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(rateLimitInterceptor).addPathPatterns("/**"); // 모든 경로에 인터셉터 추가
+    }
 
     @Bean
     public CorsFilter corsFilter() {

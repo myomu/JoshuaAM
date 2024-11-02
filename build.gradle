@@ -61,6 +61,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	// 캐시 사용
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+	// Rate Limiting
+	implementation 'com.github.vladimir-bukhtoyarov:bucket4j-core:7.2.0'
+
 }
 
 tasks.named('test') {

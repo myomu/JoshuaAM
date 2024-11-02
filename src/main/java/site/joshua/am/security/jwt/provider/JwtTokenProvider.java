@@ -172,7 +172,7 @@ public class JwtTokenProvider {
      * @param token JWT 토큰
      * @return 파싱된 클레임
      */
-    private Jws<Claims> parseToken(String token) {
+    public Jws<Claims> parseToken(String token) {
         try {
             // 이 부분을 아래와 같이 만듦.
             /*Jws<Claims> parsedToken = Jwts.parser()

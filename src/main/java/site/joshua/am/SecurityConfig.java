@@ -32,7 +32,8 @@ public class SecurityConfig {
     private final CustomUserDetailService customUserDetailService;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisRefreshTokenService redisRefreshTokenService;
-    private final CorsConfig corsConfig;
+    private final WebConfig webConfig;
+    private final RateLimitConfig.LoginRateLimitingFilter loginRateLimitingFilter;
 
     // SpringSecurity 5.5 이상
     // 시큐리티 설정
@@ -50,24 +51,24 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
 
         // 필터 설정
-        // corsFilter -> JwtRequestFilter -> JwtAuthenticationFilter 순서
-        http.addFilterAt(new JwtAuthenticationFilter(authenticationManager, jwtTokenProvider, redisRefreshTokenService),
-                        UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(corsConfig.corsFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtRequestFilter(jwtTokenProvider),
-                        UsernamePasswordAuthenticationFilter.class);
+
+        // 1.corsFilter -> 2.LoginRateLimitingFilter -> 3.JwtRequestFilter -> 4.JwtAuthenticationFilter 순서
+        http.addFilterBefore(webConfig.corsFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(loginRateLimitingFilter, UsernamePasswordAuthenticationFilter.class) // 로그인 Rate Limiting 필터
+                .addFilterBefore(new JwtRequestFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(new JwtAuthenticationFilter(authenticationManager, jwtTokenProvider, redisRefreshTokenService), UsernamePasswordAuthenticationFilter.class);
 
         // 인가 설정
         http.authorizeHttpRequests(
                 authorizeRequests ->
-                authorizeRequests
-                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 서버측 정적 자원(static) 요청 허가
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/api/users/join").permitAll()
-                        .requestMatchers("/api/login").permitAll()
-                        .requestMatchers("/api/auth/refresh-token").permitAll()
+                        authorizeRequests
+                                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 서버측 정적 자원(static) 요청 허가
+                                .requestMatchers("/").permitAll()
+                                .requestMatchers("/api/users/join").permitAll()
+                                .requestMatchers("/api/login").permitAll()
+                                .requestMatchers("/api/auth/refresh-token").permitAll()
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
+                                .anyRequest().authenticated()
         );
 
         // 인증 방식 설정

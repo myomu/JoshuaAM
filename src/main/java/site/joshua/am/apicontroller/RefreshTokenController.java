@@ -62,7 +62,7 @@ public class RefreshTokenController {
 
             // 새로운 accessToken 생성
             String newDeviceId = UUID.randomUUID().toString(); // 새로운 deviceId
-            long accessTokenExpirationTime = 1000 * 60 * 5; //* 60 * 5; // 5분
+            long accessTokenExpirationTime = 1000 * 60 * 15; // 15분
             String newAccessToken = jwtTokenProvider.createToken(newDeviceId, user.getUserLoginId(), user.getAuth(), accessTokenExpirationTime);
 
             // 새로운 refreshToken 생성

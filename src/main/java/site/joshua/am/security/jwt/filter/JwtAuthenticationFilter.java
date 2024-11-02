@@ -103,7 +103,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String deviceId = UUID.randomUUID().toString();
 
         // AccessToken 생성
-        long accessTokenExpirationTime = 1000 * 10; // 1000 * 60 * 15; // 15분
+        long accessTokenExpirationTime = 1000 * 60 * 15; // 15분
         String accessToken = jwtTokenProvider.createToken(deviceId, username, role, accessTokenExpirationTime);
 
         // Create RefreshToken, RefreshToken 을 Redis 에 저장
