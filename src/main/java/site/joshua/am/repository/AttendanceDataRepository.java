@@ -21,7 +21,7 @@ public class AttendanceDataRepository {
         em.persist(attendanceData);
     }
 
-    public List<AttendanceDataDto> findAttendanceData(Long attendanceId) {
+    public List<AttendanceDataDto> findAttendanceDataById(Long attendanceId) {
         return em.createQuery(
                 "select new site.joshua.am.dto.AttendanceDataDto(ad.id, ad.member.id, ad.member.name, ad.attendanceStatus, ad.attendance.id)" +
                         " from AttendanceData ad" +
@@ -33,7 +33,7 @@ public class AttendanceDataRepository {
                 .getResultList();
     }
 
-    public List<AttendanceDataDto> findAttendanceDataV2() {
+    public List<AttendanceDataDto> findAllAttendanceData() {
         return em.createQuery(
                 "select new site.joshua.am.dto.AttendanceDataDto(ad.id, ad.member.id, ad.member.name, ad.attendanceStatus, a.id)" +
                         " from AttendanceData ad" +

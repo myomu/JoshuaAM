@@ -2,6 +2,7 @@ package site.joshua.am.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.joshua.am.domain.Attendance;
@@ -41,9 +42,18 @@ public class AttendanceService {
     /**
      * 출석들을 찾아 List 로 반환
      */
-    public List<Attendance> findAttendances() {
-        return attendanceRepository.findAll();
+    public List<Attendance> findAttendances(Pageable pageable) {
+        return attendanceRepository.findAll(pageable);
     }
+
+    /**
+     * 출석들을 찾아 List 로 반환 할 때, AttendanceDate 또는 totalMember 에 따라 정렬해서 반환
+     */
+    public List<Attendance> findAttendancesBySort(Pageable pageable) {
+        return attendanceRepository.findAttendanceBySort(pageable);
+    }
+
+
 
     /**
      * attendanceId 에 해당하는 출석을 찾는다.
@@ -52,6 +62,9 @@ public class AttendanceService {
         return attendanceRepository.findOne(attendanceId);
     }
 
+    /**
+     * 출석 수정
+     */
     @Transactional
     public void editAttendance(Long attendanceId, EditAttendanceCheckForm form) {
 
@@ -116,15 +129,16 @@ public class AttendanceService {
      * 먼저 모든 Attendance 를 찾고 각 Attendance 의 id 에 해당하는 AttendanceData 를 찾는다.
      * 그리고 AttendancesDto 에 넣고 이것을 다시 AttendancesDtoList 에 넣어서 반환한다.
      */
-    public List<AttendanceDto> getAttendances() {
-        List<Attendance> attendances = findAttendances();
+    public List<AttendanceDto> getAttendances(Pageable pageable) {
+        //List<Attendance> attendances = findAttendances(pageable);
+        List<Attendance> attendances = findAttendancesBySort(pageable);
         List<AttendanceDto> attendanceDtoList = new ArrayList<>();
+        List<AttendanceDataDto> attendanceData = attendanceDataRepository.findAllAttendanceData();
 
-        List<AttendanceDataDto> attendanceDataV2 = attendanceDataRepository.findAttendanceDataV2();
         for (Attendance attendance : attendances) {
             List<AttendanceDataDto> selectedAttendanceData = new ArrayList<>();
 
-            for (AttendanceDataDto attendanceDataDto : attendanceDataV2) {
+            for (AttendanceDataDto attendanceDataDto : attendanceData) {
                 if (attendance.getId().equals(attendanceDataDto.getAttendanceId())) {
                     selectedAttendanceData.add(attendanceDataDto);
                 }

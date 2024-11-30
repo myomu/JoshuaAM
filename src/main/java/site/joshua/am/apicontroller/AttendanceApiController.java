@@ -3,6 +3,9 @@ package site.joshua.am.apicontroller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import site.joshua.am.domain.*;
 import site.joshua.am.dto.*;
@@ -104,7 +107,7 @@ public class AttendanceApiController {
      * 출석 목록 화면 GET 요청
      */
     //@GetMapping("/attendances")
-    public List<AttendanceDto> attendanceListV1() {
+    /*public List<AttendanceDto> attendanceListV1() {
         List<Attendance> attendances = attendanceService.findAttendances();
 
         List<AttendanceDto> attendanceDtoList = new ArrayList<>();
@@ -120,17 +123,18 @@ public class AttendanceApiController {
         }
 
         return attendanceDtoList;
-    }
+    }*/
 
     /**
      * 출석 목록 화면 GET 요청 개선 버전
      */
     @GetMapping("/attendances")
-    public List<AttendanceDto> attendanceListV2() {
-        return attendanceService.getAttendances();
+    public Page<AttendanceDto> attendanceList(Pageable pageable) {
+        log.info("pageable={}", pageable);
+        List<AttendanceDto> attendances = attendanceService.getAttendances(pageable);
+        long total = attendanceRepository.countAll(); // 전체 데이터 개수 계산
+        return new PageImpl<>(attendances, pageable, total);
     }
-
-
 
     /**
      * 출석 체크 수정 화면 요청

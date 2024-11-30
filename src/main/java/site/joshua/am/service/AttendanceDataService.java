@@ -28,7 +28,7 @@ public class AttendanceDataService {
      * 해당되는 attendanceId 값을 가지는 AttendanceData 들을 반환
      */
     public List<AttendanceDataDto> findAttendanceDataList(Long attendanceId) {
-        return attendanceDataRepository.findAttendanceData(attendanceId);
+        return attendanceDataRepository.findAttendanceDataById(attendanceId);
     }
 
 }
